@@ -6,6 +6,21 @@
   "scripts": {
     "build": "webpack"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GambleID/gidx-js"
+  },
+  "author": "GambleID (https://github.com/GambleID)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GambleID/gidx-js/issues"
+  },
+  "homepage": "https://github.com/GambleID/gidx-js",
+  "keywords": [
+    "library",
+    "gambleid",
+    "gidx"
+  ],
   "devDependencies": {
     "@babel/core": "^7.26.7",
     "@babel/preset-env": "^7.26.7",
