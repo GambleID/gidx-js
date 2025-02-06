@@ -5,6 +5,60 @@ let challengeContainer = null,
     currentAction = null,
     currentOptions = null;
 
+/**
+ * Device data that is used to process 3DS.
+ * @typedef {Object} Action
+ * @property {string} url
+ * @property {string} creq
+ * @property {string} transactionId
+ */
+
+/**
+ * Device data that is used to process 3DS.
+ * @typedef {Object} DeviceData
+ * @property {number} colorDepth
+ * @property {number} screenHeight
+ * @property {number} screenWidth
+ * @property {number} timeZone
+ * @property {number} deviceId The nSure deviceId to forward to Rapid/Coinflow.
+ */
+
+/**
+ * Options used by show3DSChallenge.
+ * @typedef {Object} Options
+ * @property {createElement} createElement Create the Element containing the challenge iframe.
+ * @property {insertElement} insertElement Insert the Element containing the challenge iframe into the page.
+ * @property {onShown} onShown Function called after Element is inserted on the page.
+ * @property {onComplete} onComplete Function called after challenge has been completed by the user.
+ */
+
+/**
+ * @callback createElement
+ * @param {string} url 
+ * @param {string} creq
+ * @returns {string|Element} The HTML string or Element to insert on the page.
+ */
+
+/**
+ * @callback insertElement
+ * @param {Element} e The Element to insert on the page.
+ * @returns {Element} The Element that was inserted on the page.
+ */
+
+/**
+ * @callback onShown 
+ * @param {Element} e The Element containing the challenge iframe.
+ */
+
+/**
+ * @callback onComplete 
+ * @param {string} transactionId The transactionID to pass in the ThreeDS object of your second CompleteSession API request.
+ */
+
+/**
+ * Default options used by show3DSChallenge
+ * @type {Options} 
+ */
 export const default3DSChallengeOptions = {
     createElement: function (url, creq) {
         //Default HTML copied from: https://docs.coinflow.cash/recipes/complete-checkout-with-3ds-challenge
@@ -21,9 +75,13 @@ export const default3DSChallengeOptions = {
     insertElement: function (e) {
         return document.body.appendChild(e);
     },
-    onShown: () => { }
+    onShown: (e) => { }
 };
 
+/**
+ * Get the data required for the ThreeDS object passed to the CompleteSession API
+ * @returns {DeviceData}
+ */
 export function get3DSDeviceData() {
     return {
         colorDepth: window.screen.colorDepth,
@@ -35,6 +93,11 @@ export function get3DSDeviceData() {
     };
 } 
 
+/**
+ * Show the 3DS challenge to the user. 
+ * @param {Action} action The Action (Type = "3DSChallenge") object returned from the CompleteSession API. Properties are case insensitive.
+ * @param {Options} options Options for how to handle the challenge. At least onComplete is required.
+ */
 export function show3DSChallenge(action, options) {
     //3DS Challenge is already open
     if (challengeContainer)
