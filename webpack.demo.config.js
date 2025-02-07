@@ -1,21 +1,25 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-export default {
-    mode: "production",
-    devtool: "source-map",
-    entry: "./src/lib/index.js",
+module.exports = {
+    mode: "development",
+    devtool: 'cheap-module-source-map',
+    entry: './src/demo/index.js',
     output: {
-        filename: "index.js",
-        library: "GIDX",
-        libraryTarget: "umd",
-        clean: true
+        filename: 'index.js'
     },
     optimization: {
-        minimize: true
+        minimize: false,
+    },
+    devServer: {
+        open: true,
+        hot: true,
+        host: "localhost",
+        port: 9000
     },
     module: {
         rules: [
             {
-                test: /\.m?js$/,
+                test: /\.(m|j|t)s$/,
                 exclude: /(node_modules|bower_components)/,
                 use: {
                     loader: 'babel-loader'
@@ -30,4 +34,9 @@ export default {
             }
         ]
     },
-}
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: "./src/demo/index.html"
+        })
+    ]
+};

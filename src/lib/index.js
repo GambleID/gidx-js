@@ -94,8 +94,8 @@ export function show3DSChallenge(action, options) {
 
     window.addEventListener("message", handleMessage);
 
-    let currentAction = normalizeAction(action),
-        url = currentAction.url,
+    currentAction = normalizeAction(action);
+    let url = currentAction.url,
         creq = currentAction.creq,
         transactionId = currentAction.transactionid;
 
@@ -105,9 +105,9 @@ export function show3DSChallenge(action, options) {
     if (!options.onComplete)
         throw new Error("options.onComplete is required to show a 3DS challenge.");
 
-    let currentOptions = Object.assign({}, defaultOptions, options);
+    currentOptions = Object.assign({}, defaultOptions, options);
 
-    challengeContainer = options.insertElement(createContainer(url, creq));
+    challengeContainer = currentOptions.insertElement(createContainer(url, creq));
     currentOptions.onShown(challengeContainer);
 }
 
