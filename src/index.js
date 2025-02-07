@@ -6,7 +6,7 @@ let challengeContainer = null,
     currentOptions = null;
 
 /**
- * Device data that is used to process 3DS.
+ * Action object that is returned from the CompleteSession API when a 3DS challenge is required.
  * @typedef {Object} Action
  * @property {string} url
  * @property {string} creq
@@ -26,28 +26,10 @@ let challengeContainer = null,
 /**
  * Options used by show3DSChallenge.
  * @typedef {Object} Options
- * @property {createElement} createElement Create the Element containing the challenge iframe.
- * @property {insertElement} insertElement Insert the Element containing the challenge iframe into the page.
- * @property {onShown} onShown Function called after Element is inserted on the page.
  * @property {onComplete} onComplete Function called after challenge has been completed by the user.
- */
-
-/**
- * @callback createElement
- * @param {string} url 
- * @param {string} creq
- * @returns {string|Element} The HTML string or Element to insert on the page.
- */
-
-/**
- * @callback insertElement
- * @param {Element} e The Element to insert on the page.
- * @returns {Element} The Element that was inserted on the page.
- */
-
-/**
- * @callback onShown 
- * @param {Element} e The Element containing the challenge iframe.
+ * @property {onShown} onShown Function called after Element is inserted into the page.
+ * @property {insertElement} insertElement Insert the Element containing the challenge iframe into the page.
+ * @property {removeElement} removeElement Remove the Element containing the challenge iframe from the page.
  */
 
 /**
@@ -56,30 +38,37 @@ let challengeContainer = null,
  */
 
 /**
+ * @callback onShown 
+ * @param {Element} e The Element containing the challenge iframe.
+ */
+
+/**
+ * @callback insertElement
+ * @param {Element} e The Element to insert into the page.
+ * @returns {Element} The Element that was inserted into the page.
+ */
+
+/**
+ * @callback removeElement
+ * @param {Element} e The Element that was inserted into the page.
+ */
+
+/**
  * Default options used by show3DSChallenge
  * @type {Options} 
  */
-export const default3DSChallengeOptions = {
-    createElement: function (url, creq) {
-        //Default HTML copied from: https://docs.coinflow.cash/recipes/complete-checkout-with-3ds-challenge
-        return `<div class="3ds-challenge-container">
-                    <iframe class="3ds-challenge-iframe"
-                            srcDoc='<html><body onload="document.challenge.submit()">
-                                    <form method="post" name="challenge" action="${encodeURI(url)}">
-                                        <input type="hidden" name="creq" value="${creq}" />
-                                    </form>
-                                    </body></html>'
-                    />
-                </div>`;
-    },
+const defaultOptions = {
     insertElement: function (e) {
         return document.body.appendChild(e);
+    },
+    removeElement: function (e) {
+        e.remove();
     },
     onShown: (e) => { }
 };
 
 /**
- * Get the data required for the ThreeDS object passed to the CompleteSession API
+ * Get the data required for the PaymentMethod.ThreeDS object passed to the CompleteSession API.
  * @returns {DeviceData}
  */
 export function get3DSDeviceData() {
@@ -116,17 +105,28 @@ export function show3DSChallenge(action, options) {
     if (!options.onComplete)
         throw new Error("options.onComplete is required to show a 3DS challenge.");
 
-    let currentOptions = Object.assign({}, default3DSChallengeOptions, options);
+    let currentOptions = Object.assign({}, defaultOptions, options);
 
-    let element = currentOptions.createElement(url, creq);
-    if (typeof (element) == "string") {
-        let template = document.createElement("template");
-        template.innerHTML = element;
-        element = template.content.firstChild;
-    }
-
-    challengeContainer = currentOptions.insertElement(element);
+    challengeContainer = options.insertElement(createContainer(url, creq));
     currentOptions.onShown(challengeContainer);
+}
+
+function createContainer(url, creq) {
+    let container = document.createElement("div");
+    container.className = "3ds-challenge-container";
+
+    //Iframe srcDoc copied from: https://docs.coinflow.cash/recipes/complete-checkout-with-3ds-challenge
+    let srcDoc = `<html><body onload="document.challenge.submit()">
+                    <form method="post" name="challenge" action="${encodeURI(url)}">
+                        <input type="hidden" name="creq" value="${creq}" />
+                    </form>
+                </body></html>`;
+    let iframe = document.createElement("iframe");
+    iframe.className = "3ds-challenge-iframe";
+    iframe.srcdoc = srcDoc;
+    container.appendChild(iframe);
+
+    return container;
 }
 
 function normalizeAction(action) {
@@ -141,7 +141,7 @@ function handleMessage(event) {
     if (event.data == "challenge_success") {
         currentOptions.onComplete(currentAction.transactionid);
 
-        challengeContainer.remove();
+        currentOptions.removeElement(challengeContainer);
         challengeContainer = null;
         currentAction = null;
     }
