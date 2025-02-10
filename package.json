@@ -1,10 +1,12 @@
 {
   "name": "gidx-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Client-side Javascript utilities for GambleID",
-  "main": "dist/index.js",
+  "type": "module",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.umd.js",
   "scripts": {
-    "build": "webpack",
+    "build": "rimraf dist && webpack",
     "demo": "webpack serve --config webpack.demo.config.js"
   },
   "repository": {
@@ -29,6 +31,7 @@
     "core-js": "^3.40.0",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.3",
+    "rimraf": "^6.0.1",
     "style-loader": "^4.0.0",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",

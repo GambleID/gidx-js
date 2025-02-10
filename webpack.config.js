@@ -1,14 +1,7 @@
-
-export default {
+const commonConfig = {
     mode: "production",
     devtool: "source-map",
     entry: "./src/lib/index.js",
-    output: {
-        filename: "index.js",
-        library: "GIDX",
-        libraryTarget: "umd",
-        clean: true
-    },
     optimization: {
         minimize: true
     },
@@ -29,5 +22,34 @@ export default {
                 ]
             }
         ]
-    },
+    }
 }
+
+export default [
+    {
+        ...commonConfig,
+        output: {
+            filename: "./index.umd.js",
+            library: {
+                type: "umd",
+                name: "GIDX"
+            },
+            //clean had to be removed because it doesn't work with multiple outputs. Instead, I'm running rimraf before webpack in the build script.
+            //clean: true
+        }
+    },
+    {
+        ...commonConfig,
+        output: {
+            filename: "./index.esm.js",
+            library: {
+                type: "module"
+            },
+            //clean had to be removed because it doesn't work with multiple outputs. Instead, I'm running rimraf before webpack in the build script.
+            //clean: true
+        },
+        experiments: {
+            outputModule: true
+        }
+    }
+]
