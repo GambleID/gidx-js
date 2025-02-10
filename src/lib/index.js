@@ -59,10 +59,16 @@ let challengeContainer = null,
  */
 const defaultOptions = {
     insertElement: function (e) {
-        return document.body.appendChild(e);
+        document.body.appendChild(e);
+        e.showModal();
+        return e;
     },
     removeElement: function (e) {
-        e.remove();
+        //If it's a dialog element, call close.
+        if (e.close)
+            e.close();
+        else
+            e.remove();
     },
     onShown: (e) => { }
 };
@@ -94,6 +100,9 @@ export function show3DSChallenge(action, options) {
 
     window.addEventListener("message", handleMessage);
 
+    //Remove any previous container that somehow didn't get removed.
+    document.querySelector(".challenge-container")?.remove();
+
     currentAction = normalizeAction(action);
     let url = currentAction.url,
         creq = currentAction.creq,
@@ -112,8 +121,8 @@ export function show3DSChallenge(action, options) {
 }
 
 function createContainer(url, creq) {
-    let container = document.createElement("div");
-    container.className = "3ds-challenge-container";
+    let container = document.createElement("dialog");
+    container.className = "challenge-container";
 
     //Iframe srcDoc copied from: https://docs.coinflow.cash/recipes/complete-checkout-with-3ds-challenge
     let srcDoc = `<html><body onload="document.challenge.submit()">
@@ -122,7 +131,6 @@ function createContainer(url, creq) {
                     </form>
                 </body></html>`;
     let iframe = document.createElement("iframe");
-    iframe.className = "3ds-challenge-iframe";
     iframe.srcdoc = srcDoc;
     container.appendChild(iframe);
 

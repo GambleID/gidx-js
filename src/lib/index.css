@@ -1,4 +1,18 @@
-h1 {
-    margin: 0;
-    font-weight: 300;
+.challenge-container {
+    border: none;
+    padding: 0px;
+    height: 90vh;
+    overflow: hidden;
+    width: unset; /* Remove default width added to dialog elements. In Chrome, it was 300px. */
+}
+
+.challenge-container::backdrop {
+    background-color: gray;
+    opacity: 0.75;
+}
+
+.challenge-container iframe {
+    border: none;
+    height: 100%;
+    width: 100%;
 }
