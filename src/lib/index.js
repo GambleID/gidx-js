@@ -6,6 +6,11 @@ let challengeContainer = null,
     currentOptions = null;
 
 /**
+ * @module gidx-js
+ * @typicalname GIDX
+ */
+
+/**
  * Action object that is returned from the CompleteSession API when a 3DS challenge is required.
  * @typedef {Object} Action
  * @property {string} url
@@ -20,7 +25,7 @@ let challengeContainer = null,
  * @property {number} screenHeight
  * @property {number} screenWidth
  * @property {number} timeZone
- * @property {number} deviceId The nSure deviceId to forward to Rapid/Coinflow.
+ * @property {string} deviceId The nSure deviceId to forward to Rapid/Coinflow.
  */
 
 /**
@@ -53,10 +58,6 @@ let challengeContainer = null,
  * @param {Element} e The Element that was inserted into the page.
  */
 
-/**
- * Default options used by show3DSChallenge
- * @type {Options} 
- */
 const defaultOptions = {
     insertElement: function (e) {
         document.body.appendChild(e);
@@ -76,6 +77,7 @@ const defaultOptions = {
 /**
  * Get the data required for the PaymentMethod.ThreeDS object passed to the CompleteSession API.
  * @returns {DeviceData}
+ * @static
  */
 export function get3DSDeviceData() {
     return {
@@ -92,6 +94,7 @@ export function get3DSDeviceData() {
  * Show the 3DS challenge to the user. 
  * @param {Action} action The Action (Type = "3DSChallenge") object returned from the CompleteSession API. Properties are case insensitive.
  * @param {Options} options Options for how to handle the challenge. At least onComplete is required.
+ * @static
  */
 export function show3DSChallenge(action, options) {
     //3DS Challenge is already open

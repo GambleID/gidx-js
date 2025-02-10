@@ -1,0 +1,35 @@
+﻿[![view on npm](http://img.shields.io/npm/v/gidx-js.svg)](https://www.npmjs.org/package/gidx-js)
+
+# gidx-js
+Client-side Javascript utilities for GambleID when using Approvely Rapid.
+
+## Install
+As a script tag (added to window.GIDX):
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/gidx-js"></script>
+
+<script>
+    //Library is added to window.GIDX
+    let threeDS = window.GIDX.get3DSDeviceData();
+</script>
+```
+
+As a module:
+```js
+import * as GIDX from 'https://cdn.jsdelivr.net/npm/gidx-js/+esm'
+```
+
+As a NPM package:
+
+```
+$ npm install gidx-js
+import * as GIDX from 'gidx-js';
+```
+
+## API Reference
+{{>main}}
+
+* * *
+
+&copy; 2025 GambleID. Documented by [jsdoc-to-markdown](https://github.com/jsdoc2md/jsdoc-to-markdown).
