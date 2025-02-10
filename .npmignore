@@ -1,0 +1,17 @@
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# dependencies
+node_modules
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Development folders and files
+src
+CHANGELOG.md
+README.md
+webpack.config.js
+webpack.demo.config.js
+babel.config.js
