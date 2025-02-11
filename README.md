@@ -30,7 +30,8 @@ import * as GIDX from 'gidx-js';
 ```
 
 ## Usage
-1. Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
+### Populating the ThreeDS object
+Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
 ```js
 let completeSessionRequest = {
     PaymentMethod: {
@@ -57,7 +58,8 @@ If you are also using Approvely Rapid's [chargeback protection](https://docs.coi
 </script>
 ```
 
-2. Handle the 3DSChallenge Action that can be returned from the CompleteSession API by calling the `show3DSChallenge` function.
+### Handling the 3DSChallenge Action
+Handle the 3DSChallenge Action that can be returned from the CompleteSession API by calling the `show3DSChallenge` function.
 ```js
 let completeSessionResponse = {
     Action: {
