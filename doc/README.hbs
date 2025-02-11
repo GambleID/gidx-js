@@ -3,6 +3,8 @@
 # gidx-js
 Client-side Javascript utilities for GambleID when using Approvely Rapid.
 
+Approvely Rapid requires 3D Secure (3DS, ThreeDS) for all credit card, Apple Pay and Google Pay payments. This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges.
+
 ## Install
 As a script tag (added to window.GIDX):
 
@@ -27,9 +29,91 @@ $ npm install gidx-js
 import * as GIDX from 'gidx-js';
 ```
 
-## API Reference
-{{>main}}
+## Usage
+1. Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
+```js
+let completeSessionRequest = {
+    PaymentMethod: {
+        Type: "CC",
+        Token: "{insert token here}",
+        CVV: "123",
+        ThreeDS: GIDX.get3DSDeviceData()
+    }
+};
+```
 
+If you are also using Approvely Rapid's [chargeback protection](https://docs.coinflow.cash/docs/implement-chargeback-protection) and have initiated the nSure SDK on the page, `get3DSDeviceData` will also include the `DeviceID`. Below is the javascript Approvely Rapid wants you to include on every page of your app, if you are using their chargeback protection.
+
+```html
+<script src="https://sdk.nsureapi.com/sdk.js"></script>
+<script>
+    window.nSureAsyncInit = function (deviceId) {
+        window.nSureSDK.init('9JBW2RHC7JNJN8ZQ');
+        window.nSureSDK.init({
+            appId: '9JBW2RHC7JNJN8ZQ',
+            partnerId: '<contact Approvely for this>'
+        });
+    };
+</script>
+```
+
+2. Handle the 3DSChallenge Action that can be returned from the CompleteSession API by calling the `show3DSChallenge` function.
+```js
+let completeSessionResponse = {
+    Action: {
+        Type: "3DSChallenge",
+        URL: "https://acs-public.tp.mastercard.com/api/v1/browser_challenges",
+        CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI...",
+        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d"
+    }
+};
+
+if (completeSessionResponse.Action?.Type == "3DSChallenge") {
+    GIDX.show3DSChallenge(completeSessionResponse.Action, {
+        onComplete: function (transactionId) {
+            //Send another CompleteSession request after challenge is completed.
+            let completeSessionRequest = {
+                PaymentMethod: {
+                    Type: "CC",
+                    Token: "{insert token here}",
+                    ThreeDS: {
+                        TransactionID: transactionId,
+
+                        //Optional. Only required if using Approvely Rapid's chargeback protection
+                        DeviceID: window.nSureSDK?.getDeviceId()
+                    }
+                }
+            };
+
+            //Call CompleteSession API here
+        }
+    });
+}
+```
+
+A 3DS challenge is a URL that gets loaded in a modal iframe that let's the user verify themselves with their bank. For more info on 3DS, [see the Approvely Rapid docs](https://docs.coinflow.cash/docs/about-3ds).
+
+Although in our API requests to Approvely Rapid we set the option that we prefer not to receive a 3DS challenge, in the end it's up to the user's bank, so you need to handle the possibility that a challenge will be requested.
+
+### Customizing the 3DS Challenge HTML
+
+By default, the 3DS challenge is an HTML5 dialog element inserted into the body of your page. The HTML looks like this:
+```html
+<dialog class="challenge-container">
+    <iframe></iframe>
+</dialog>
+```
+
+The [default CSS](src/lib/index.css) is included in the library, but feel free to add your own CSS to your page.
+
+For more advanced customization, you can provide `insertElement` and `removeElement` functions in your `options` object.
+
+## API Reference
+{{#module name="gidx-js"}}
+{{>body~}}
+{{>member-index~}}
+{{>members~}}
+{{/module}}
 * * *
 
 &copy; 2025 GambleID. Documented by [jsdoc-to-markdown](https://github.com/jsdoc2md/jsdoc-to-markdown).
