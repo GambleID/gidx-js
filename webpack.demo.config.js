@@ -1,6 +1,6 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-module.exports = {
+export default {
     mode: "development",
     devtool: 'cheap-module-source-map',
     entry: './src/demo/index.js',
