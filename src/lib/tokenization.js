@@ -11,7 +11,7 @@ const defaultOptions = {
     paymentMethodTypes: ['CC', 'ACH'],
     savePaymentMethod: true,
     tokenizer: {
-        name: 'Finix',
+        type: 'Finix',
         applicationId: null
     },
     merchantSessionId: null,
@@ -29,7 +29,7 @@ export function showPaymentMethodForm(elementId, options) {
     if (typeof (options.paymentMethodTypes) === 'string')
         options.paymentMethodTypes = [options.paymentMethodTypes];
 
-    //We want the properties in options.tokenzier to be case-insensitive, so normalizeApiResponse converts them all the lower case.
+    //We want the properties in options.tokenizer to be case-insensitive, so normalizeApiResponse converts them all the lower case.
     //We want merchants to be able to just forward the full Tokenizer object they get back in the CreateSession response as-is.
     //That means it will be in C# style case (ApplicationID), but we also want to support typical javascript style (applicationId).
     options.tokenizer = normalizeApiResponse(options.Tokenizer || options.tokenizer);
