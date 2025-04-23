@@ -25,6 +25,13 @@ const defaultOptions = {
 };
 
 export function showPaymentMethodForm(elementId, options) {
+    if (!gidxOptions.merchantId)
+        throw new Error('You must call GIDX.init first to provide the merchantId and environment.');
+    if (!options.merchantSessionId)
+        throw new Error('merchantSessionId is required. Provide the same merchantSessionId that you passed to CreateSession.');
+    if (!window.Finix)
+        throw new Error('You must include a script tag for https://js.finix.com/v/1/finix.js');
+    
     options = { ...defaultOptions, ...options };
 
     if (typeof (options.paymentMethodTypes) === 'string')
