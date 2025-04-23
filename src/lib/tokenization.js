@@ -8,7 +8,7 @@ const endpoints = {
 }
 
 const defaultOptions = {
-    endpoint: endpoints[gidxOptions.environment],
+    endpoint: null,
     paymentMethodTypes: ['CC', 'ACH'],
     savePaymentMethod: true,
     tokenizer: {
@@ -36,6 +36,9 @@ export function showPaymentMethodForm(elementId, options) {
 
     if (typeof (options.paymentMethodTypes) === 'string')
         options.paymentMethodTypes = [options.paymentMethodTypes];
+
+    if (!options.endpoint)
+        options.endpoint = endpoints[gidxOptions.environment];
 
     //We want the properties in options.tokenizer to be case-insensitive, so normalizeApiResponse converts them all the lower case.
     //We want merchants to be able to just forward the full Tokenizer object they get back in the CreateSession response as-is.
