@@ -81,7 +81,7 @@ function submit() {
 
         options.onSaving(request);
 
-        let response = await fetch(endpoint[gidxOptions.environment], {
+        let response = await window.fetch(endpoint[gidxOptions.environment], {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
