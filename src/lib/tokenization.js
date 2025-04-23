@@ -2,12 +2,13 @@ import "core-js/stable";
 import { options as gidxOptions } from './index.js'
 import { normalizeApiResponse } from './util.js';
 
-const endpoint = {
+const endpoints = {
     sandbox: 'https://api.gidx-service.in/v3.0/api/DirectCashier/PaymentMethod',
     production: 'https://api.gidx-service.com/v3.0/api/DirectCashier/PaymentMethod'
 }
 
 const defaultOptions = {
+    endpoint: endpoints[gidxOptions.environment],
     paymentMethodTypes: ['CC', 'ACH'],
     savePaymentMethod: true,
     tokenizer: {
@@ -81,7 +82,7 @@ function submit() {
 
         options.onSaving(request);
 
-        let response = await fetch(endpoint[gidxOptions.environment], {
+        let response = await fetch(options.endpoint, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
