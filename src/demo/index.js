@@ -51,6 +51,7 @@ GIDX.init({
 
 let form = GIDX.showPaymentMethodForm('payment-method-form', {
     //paymentMethodTypes: ['ACH', 'CC']
+    merchantSessionId: '1234',
     tokenizer: {
         name: 'Finix',
         applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
