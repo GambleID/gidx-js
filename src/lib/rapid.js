@@ -1,5 +1,5 @@
 import "core-js/stable"; 
-import "./index.css";
+import { normalizeApiResponse } from './util.js';
 
 let challengeContainer = null,
     currentAction = null,
@@ -122,7 +122,7 @@ export function show3DSChallenge(action, options) {
     //Remove any previous container that somehow didn't get removed.
     document.querySelector(".challenge-container")?.remove();
 
-    currentAction = normalizeAction(action);
+    currentAction = normalizeApiResponse(action);
     let url = currentAction.url,
         creq = currentAction.creq,
         transactionId = currentAction.transactionid;
@@ -154,14 +154,6 @@ function createContainer(url, creq) {
     container.appendChild(iframe);
 
     return container;
-}
-
-function normalizeAction(action) {
-    //Action object from API response has properties in C# style case (TransactionID), but we want to support normal javascript style as well (transactionId).
-    //Create new object with all keys converted to lower case.
-    return Object.fromEntries(
-        Object.entries(action).map(([k, v]) => [k.toLowerCase(), v])
-    );
 }
 
 function handleMessage(event) {

@@ -1,5 +1,6 @@
 import "core-js/stable"; 
-import { options as gidxOptions }  from './index.js'
+import { options as gidxOptions } from './index.js'
+import { normalizeApiResponse } from './util.js';
 
 const endpoint = {
     sandbox: 'https://api.gidx-service.in/v3.0/api/DirectCashier/PaymentMethod',
@@ -17,7 +18,8 @@ const defaultOptions = {
     showSubmitButton: true,
     onLoad: () => { },
     onUpdate: () => { },
-    onTokenized: () => { },
+    onSaving: (request) => { },
+    onSaved: (response) => { },
     onError: () => { }
 };
 
@@ -26,6 +28,11 @@ export function showPaymentMethodForm(elementId, options) {
 
     if (typeof (options.paymentMethodTypes) === 'string')
         options.paymentMethodTypes = [options.paymentMethodTypes];
+
+    //We want the properties in options.tokenzier to be case-insensitive, so normalizeApiResponse converts them all the lower case.
+    //We want merchants to be able to just forward the full Tokenizer object they get back in the CreateSession response as-is.
+    //That means it will be in C# style case (ApplicationID), but we also want to support typical javascript style (applicationId).
+    options.tokenizer = normalizeApiResponse(options.Tokenizer || options.tokenizer);
 
     let result = {
         options
@@ -55,9 +62,9 @@ export function showPaymentMethodForm(elementId, options) {
 function submit() {
     var options = this.options;
     let finixEnvironment = gidxOptions.environment == "production" ? "live" : "sandbox";
-    this.finixForm.submit(finixEnvironment, options.tokenizer.applicationId, async function (err, res) {
+    this.finixForm.submit(finixEnvironment, options.tokenizer.applicationid, async function (err, res) {
         if (!res.data?.id)
-            options.onError(res || err);
+            options.onError(res || err, null);
 
         let request = {
             merchantId: gidxOptions.merchantId,
@@ -66,24 +73,28 @@ function submit() {
                 type: res.data.instrument_type == 'BANK_ACCOUNT' ? 'ACH' : 'CC',
                 processorToken: {
                     processor: 'Finix',
-                    token: res.data.id,
-                    fingerprint: res.data.fingerprint
+                    token: res.data.id
                 }
             },
             savePaymentMethod: options.savePaymentMethod
         };
 
+        options.onSaving(request);
+
         let response = await fetch(endpoint[gidxOptions.environment], {
             method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
             body: JSON.stringify(request)
         })
         if (!response.ok)
-            options.onError(response);
+            options.onError(null, response);
 
         let responseData = await response.json();
         if (responseData.ResponseCode === 0)
-            options.onTokenized(responseData.PaymentMethod);
+            options.onSaved(responseData.PaymentMethod);
         else
-            options.onError(responseData);
+            options.onError(null, responseData);
     });
 }
