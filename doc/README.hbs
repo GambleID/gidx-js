@@ -1,9 +1,11 @@
 ﻿[![view on npm](http://img.shields.io/npm/v/gidx-js.svg)](https://www.npmjs.org/package/gidx-js)
 
 # gidx-js
-Client-side Javascript utilities for GambleID when using Approvely Rapid.
+Client-side Javascript utilities for GambleID.
 
-Approvely Rapid requires 3D Secure (3DS, ThreeDS) for all credit card, Apple Pay and Google Pay payments. This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges.
+This library includes utilities for:
+* [Approvely Rapid 3DS](#rapid-3ds)
+* [Credit Card Tokenization (via Finix)](#tokenization)
 
 ## Install
 As a script tag (added to window.GIDX):
@@ -29,7 +31,16 @@ $ npm install gidx-js
 import * as GIDX from 'gidx-js';
 ```
 
-## Usage
+## Initialization
+First, call the `init` function with your GIDX Merchant ID and target environment.
+```js
+GIDX.init({
+    merchantId: "5OQAQWZbkkSdEmlfVxsNlA",
+    environment: "sandbox" //or production
+});
+```
+## Rapid 3DS
+Approvely Rapid requires 3D Secure (3DS, ThreeDS) for all credit card, Apple Pay and Google Pay payments. This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges.
 ### Populating the ThreeDS object
 Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
 ```js
@@ -109,6 +120,86 @@ By default, the 3DS challenge is an HTML5 dialog element inserted into the body 
 The [default CSS](src/lib/index.css) is included in the library, but feel free to add your own CSS to your page.
 
 For more advanced customization, you can provide `insertElement` and `removeElement` functions in your `options` object.
+
+## Tokenization
+In order to use Finix to process credit cards, you must use their [tokenization form](https://finix.com/docs/guides/payments/online-payments/payment-details/token-forms/). Our library provides a function, `showPaymentMethodForm`, that renders the Finix form and handles the submission to our PaymentMethod API.
+
+### Usage
+See the commented code sample below.
+```js
+//First, make sure to initialize the library with your GIDX Merchant ID and target environment
+GIDX.init({
+    merchantId: "5OQAQWZbkkSdEmlfVxsNlA",
+    environment: "sandbox" //or production
+})
+
+//Get the Tokenizer configuration returned in the CreateSession response
+let ccSettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "CC");
+
+//Call the function to render the form inside of your HTML element
+GIDX.showPaymentMethodForm(
+    'id-of-html-element', //The id of the HTML element. Must already exist on the page.
+    {
+        merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
+        paymentMethodTypes: ['CC'], //Finix tokenization form accepts both credit card and bank accounts, but only credit cards are required to use it.
+        tokenizer: ccSettings.Tokenizer,
+        onSaved: function (paymentMethod) {
+            //The full PaymentMethod object returned from our API is passed to this function.
+            //Use it to populate your CompleteSession request and finalize the transaction.
+            let completeSessionRequest = {
+                MerchantSessionID: '1234',
+                PaymentMethod: {
+                    Type: paymentMethod.Type,
+                    Token: paymentMethod.Token
+                }
+            };
+        }
+    });
+```
+
+### Billing address
+The Finix tokenization form does have the ability to collect the customer's billing address by passing `showAddress: true` in the options.
+However, it is also possible to pass the billing address yourself by using the `onSaving` option. This option allows you to make any changes to the PaymentMethod API request before it is sent.
+```js
+GIDX.showPaymentMethodForm('id-of-html-element', {
+    merchantSessionId: '1234',
+    paymentMethodTypes: ['CC'],
+    tokenizer: ccSettings.Tokenizer,
+    onSaved: function (paymentMethod) { },
+
+    showAddress: false, //Tell Finix not to build their own address elements.
+    onSaving: function (request) {
+        //Here you could get the address information from other inputs on the page that you control.
+        request.billingAddress = {
+            addressLine1: '123 Main St.',
+            city: 'Houston',
+            stateCode: 'TX',
+            postalCode: '77001'
+        };
+    }
+})
+```
+
+### Customizing the tokenization form
+Along with the options documented here, you can also provide any of the options that the [Finix JS library accepts](https://finix.com/docs/guides/payments/online-payments/payment-details/token-forms/).
+```js
+GIDX.showPaymentMethodForm('id-of-html-element', {
+    merchantSessionId: '1234',
+    paymentMethodTypes: ['CC'],
+    tokenizer: ccSettings.Tokenizer,
+    onSaved: function (paymentMethod) { },
+
+    styles: {
+        default: {
+            border: '1px solid #CCCDCF',
+            borderRadius: '8px'
+        },
+        error: {
+            border: '1px solid rgba(255,0,0, 0.3)'
+        }
+    }
+});
+```
 
 ## API Reference
 {{#module name="gidx-js"}}

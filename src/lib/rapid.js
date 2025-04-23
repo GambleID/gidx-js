@@ -14,7 +14,7 @@ let challengeContainer = null,
  * Action object that is returned from the CompleteSession API when a 3DS challenge is required.
  * @typedef {Object} Action
  * @memberof module:gidx-js
- * @category objects
+ * @category rapid objects
  * @property {string} url
  * @property {string} creq
  * @property {string} transactionId
@@ -24,7 +24,7 @@ let challengeContainer = null,
  * Device data that is used to process 3DS.
  * @typedef {Object} DeviceData
  * @memberof module:gidx-js
- * @category objects
+ * @category rapid objects
  * @property {number} colorDepth
  * @property {number} screenHeight
  * @property {number} screenWidth
@@ -34,9 +34,9 @@ let challengeContainer = null,
 
 /**
  * Options used by show3DSChallenge.
- * @typedef {Object} Options
+ * @typedef {Object} 3DSChallengeOptions
  * @memberof module:gidx-js
- * @category objects
+ * @category rapid objects
  * @property {onComplete} onComplete Function called after challenge has been completed by the user.
  * @property {onShown} onShown Function called after Element is inserted into the page.
  * @property {insertElement} insertElement Insert the Element containing the challenge iframe into the page.
@@ -46,21 +46,21 @@ let challengeContainer = null,
 /**
  * @callback onComplete 
  * @memberof module:gidx-js
- * @category callbacks
+ * @category rapid callbacks
  * @param {string} transactionId The transactionID to pass in the ThreeDS object of your second CompleteSession API request.
  */
 
 /**
  * @callback onShown 
  * @memberof module:gidx-js
- * @category callbacks
+ * @category rapid callbacks
  * @param {Element} e The Element containing the challenge iframe.
  */
 
 /**
  * @callback insertElement
  * @memberof module:gidx-js
- * @category callbacks
+ * @category rapid callbacks
  * @param {Element} e The Element to insert into the page.
  * @returns {Element} The Element that was inserted into the page.
  */
@@ -68,7 +68,7 @@ let challengeContainer = null,
 /**
  * @callback removeElement
  * @memberof module:gidx-js
- * @category callbacks
+ * @category rapid callbacks
  * @param {Element} e The Element that was inserted into the page.
  */
 
@@ -92,7 +92,7 @@ const defaultOptions = {
  * Get the data required for the PaymentMethod.ThreeDS object passed to the CompleteSession API.
  * @returns {DeviceData}
  * @static
- * @category functions
+ * @category rapid functions
  */
 export function get3DSDeviceData() {
     return {
@@ -108,9 +108,9 @@ export function get3DSDeviceData() {
 /**
  * Show the 3DS challenge to the user. 
  * @param {Action} action The Action (Type = "3DSChallenge") object returned from the CompleteSession API. Properties are case insensitive.
- * @param {Options} options Options for how to handle the challenge. At least onComplete is required.
+ * @param {3DSChallengeOptions} options Options for how to handle the challenge. At least onComplete is required.
  * @static
- * @category functions
+ * @category rapid functions
  */
 export function show3DSChallenge(action, options) {
     //3DS Challenge is already open
