@@ -157,6 +157,33 @@ GIDX.showPaymentMethodForm(
     });
 ```
 
+### Manually submit
+By default, a submit button will be rendered. If you want to handle the submission yourself, you should pass the option `showSubmitButton: false` and call `submit`, as shown below.
+```js
+let form = GIDX.showPaymentMethodForm(
+    'id-of-html-element', //The id of the HTML element. Must already exist on the page.
+    {
+        merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
+        paymentMethodTypes: ['CC'], //Finix tokenization form accepts both credit card and bank accounts, but only credit cards are required to use it.
+        tokenizer: ccSettings.Tokenizer,
+        showSubmitButton: false,
+        onSaved: function (paymentMethod) {
+            //The full PaymentMethod object returned from our API is passed to this function.
+            //Use it to populate your CompleteSession request and finalize the transaction.
+            let completeSessionRequest = {
+                MerchantSessionID: '1234',
+                PaymentMethod: {
+                    Type: paymentMethod.Type,
+                    Token: paymentMethod.Token
+                }
+            };
+        }
+    });
+
+//When you are ready to submit, call this function.
+form.submit();
+```
+
 ### Billing address
 The Finix tokenization form does have the ability to collect the customer's billing address by passing `showAddress: true` in the options.
 However, it is also possible to pass the billing address yourself by using the `onSaving` option. This option allows you to make any changes to the PaymentMethod API request before it is sent.
