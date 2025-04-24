@@ -44,3 +44,22 @@ document.getElementById("show-challenge").onclick = function () {
 
     }
 }
+
+GIDX.init({
+    merchantId: "1234"
+});
+
+let form = GIDX.showPaymentMethodForm('payment-method-form', {
+    //paymentMethodTypes: ['ACH', 'CC']
+    merchantSessionId: '1234',
+    tokenizer: {
+        name: 'Finix',
+        applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
+    },
+    showSubmitButton: true,
+    hideErrorMessages: false
+});
+
+//document.getElementById("save-payment-method").onclick = function () {
+//    form.submit();
+//}
