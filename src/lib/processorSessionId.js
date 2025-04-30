@@ -13,10 +13,10 @@ let handlerFactories = {
 }
 
 export function init(options) {
-    let factory = handlerFactories[options.name.toLowerCase()];
+    let factory = handlerFactories[options.type.toLowerCase()];
     if (!factory) {
-        let handlerNames = Object.keys(handlerFactories).join(', ');
-        throw new Error(`Unable to find handler for ${options.name}. Available handlers: ${handlerNames}.`)
+        let handlerTypes = Object.keys(handlerFactories).join(', ');
+        throw new Error(`Unable to find handler for ${options.type}. Available handlers: ${handlerTypes}.`)
     }
 
     handler = factory(options);
