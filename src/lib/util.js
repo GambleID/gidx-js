@@ -5,3 +5,22 @@ export function normalizeApiResponse(action) {
         Object.entries(action).map(([k, v]) => [k.toLowerCase(), v])
     );
 }
+
+export function loadScript(url) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.setAttribute('src', url);
+        script.setAttribute('type', 'text/javascript');
+        script.setAttribute('async', 'true');
+
+        script.onload = () => {
+            resolve();
+        }
+
+        script.onerror = () => {
+            reject(new Error(`Could not load script: ${url}`));
+        }
+
+        document.head.appendChild(script);
+    });
+}

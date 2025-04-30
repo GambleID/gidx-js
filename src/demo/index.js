@@ -46,7 +46,11 @@ document.getElementById("show-challenge").onclick = function () {
 }
 
 GIDX.init({
-    merchantId: "1234"
+    merchantId: "1234",
+    processorSessionId: {
+        name: 'Finix',
+        merchantId: 'MU4cihj5vQnQ1x8zxmE5jG4G'
+    }
 });
 
 let form = GIDX.showPaymentMethodForm('payment-method-form', {
@@ -63,3 +67,7 @@ let form = GIDX.showPaymentMethodForm('payment-method-form', {
 //document.getElementById("save-payment-method").onclick = function () {
 //    form.submit();
 //}
+
+document.getElementById("get-processor-session-id").onclick = function () {
+    alert(GIDX.getProcessorSessionId());
+}
