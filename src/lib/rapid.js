@@ -1,4 +1,3 @@
-import "core-js/stable"; 
 import { normalizeApiResponse } from './util.js';
 
 let challengeContainer = null,

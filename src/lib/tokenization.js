@@ -1,4 +1,3 @@
-import "core-js/stable"; 
 import { options as gidxOptions } from './index.js'
 import { normalizeApiResponse } from './util.js';
 

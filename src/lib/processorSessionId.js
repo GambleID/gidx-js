@@ -1,4 +1,3 @@
-import "core-js/stable"; 
 import { loadScript } from './util.js';
 import { options as gidxOptions } from './index.js'
 import finixFactory from './processorSessionId-finix.js';
