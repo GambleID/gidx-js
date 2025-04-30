@@ -3,6 +3,7 @@
   "version": "0.2.3",
   "description": "Client-side Javascript utilities for GambleID",
   "type": "module",
+  "exports": "./dist/index.esm.js",
   "module": "dist/index.esm.js",
   "browser": "dist/index.umd.js",
   "scripts": {
