@@ -1,6 +1,6 @@
 {
   "name": "gidx-js",
-  "version": "0.2.2",
+  "version": "0.2.3-0",
   "description": "Client-side Javascript utilities for GambleID",
   "type": "module",
   "module": "dist/index.esm.js",
