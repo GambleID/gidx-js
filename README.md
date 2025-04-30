@@ -6,6 +6,7 @@ Client-side Javascript utilities for GambleID.
 This library includes utilities for:
 * [Approvely Rapid 3DS](#rapid-3ds)
 * [Credit Card Tokenization (via Finix)](#tokenization)
+* [Processor Session ID](#processor-session-id)
 
 ## Install
 As a script tag (added to window.GIDX):
@@ -226,6 +227,30 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
         }
     }
 });
+```
+
+## Processor Session ID
+Some processors, like Finix, require you to use their own JS SDK's for monitoring risk and fraud. To do this, you must call `GIDX.init` on every page of your application. Then, you must pass the `ProcessorSessionID` in your CreateSession or CompleteSession API requests.
+
+### Initialization
+Call this on every page. You will get the required processor's credentials when you go live.
+```js
+GIDX.init({
+    merchantId: "5OQAQWZbkkSdEmlfVxsNlA",
+    environment: "sandbox" //or production,
+    processorSessionId: {
+        type: "Finix",
+        merchantId: "You will get this from Finix. In sandbox you can leave it empty."
+    }
+})
+```
+
+### Getting the Processor Session ID
+Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API requests.
+```js
+{
+    "ProcessorSessionID": GIDX.getProcessorSessionId()
+}
 ```
 
 ## API Reference
