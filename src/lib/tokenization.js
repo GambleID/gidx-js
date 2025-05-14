@@ -1,6 +1,7 @@
 import { options as gidxOptions } from './index.js'
 import { normalizeApiResponse } from './util.js';
 import finixFactory from './tokenization-finix.js';
+import evervaultFactory from './tokenization-evervault.js';
 
 /**
  * @module gidx-js
@@ -89,7 +90,8 @@ const defaultOptions = {
 };
 
 let tokenizerFactories = {
-    finix: finixFactory
+    finix: finixFactory,
+    evervault: evervaultFactory
 }
 
 /**
@@ -123,7 +125,6 @@ export function showPaymentMethodForm(elementId, options) {
         throw new Error(`Unable to find tokenizer for ${options.tokenizer.type}. Available tokenizers: ${tokenizerTypes}.`)
     }
 
-    console.log('showPaymentMethodForm', elementId, options);
     let tokenizer = factory(elementId, options);
     tokenizer.options = options;
 
