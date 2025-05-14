@@ -14,7 +14,7 @@ class Finix {
     }
 
     init(elementId, options) {
-        console.log(elementId, options);
+        //Passing Finix the onSubmit option will show their submit button. If showSubmitButton is false, merchant will need to manually call submit.
         if (options.showSubmitButton) {
             options.onSubmit = this.submit.bind(this);
         };
