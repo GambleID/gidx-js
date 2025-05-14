@@ -130,3 +130,31 @@ export function showPaymentMethodForm(elementId, options) {
 
     return tokenizer;
 }
+
+export async function sendPaymentMethodRequest(tokenizer, paymentMethod) {
+    let options = tokenizer.options;
+    let request = {
+        merchantId: gidxOptions.merchantId,
+        merchantSessionId: options.merchantSessionId,
+        paymentMethod: paymentMethod,
+        savePaymentMethod: options.savePaymentMethod
+    };
+
+    options.onSaving(request);
+
+    let response = await fetch(options.endpoint, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(request)
+    })
+    if (!response.ok)
+        options.onError(null, response);
+
+    let responseData = await response.json();
+    if (responseData.ResponseCode === 0)
+        options.onSaved(responseData.PaymentMethod);
+    else
+        options.onError(null, responseData);
+}

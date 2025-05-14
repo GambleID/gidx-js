@@ -21,5 +21,5 @@ export function init(o) {
 }
 
 export * from './rapid.js';
-export * from './tokenization.js';
+export { showPaymentMethodForm } from './tokenization.js';
 export { getProcessorSessionId };

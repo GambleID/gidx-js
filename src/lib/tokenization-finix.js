@@ -1,5 +1,6 @@
 import { loadScript } from './util.js';
-import { options as gidxOptions } from './index.js'
+import { options as gidxOptions } from './index.js';
+import { sendPaymentMethodRequest } from './tokenization.js';
 
 
 class Finix {
@@ -34,42 +35,21 @@ class Finix {
     }
 
     submit() {
-        var options = this.options;
+        let self = this;
+        let options = self.options;
         let finixEnvironment = gidxOptions.environment == "production" ? "live" : "sandbox";
         this.finixForm.submit(finixEnvironment, options.tokenizer.applicationid, async function (err, res) {
             if (!res.data?.id)
                 options.onError(res || err, null);
 
-            let request = {
-                merchantId: gidxOptions.merchantId,
-                merchantSessionId: options.merchantSessionId,
-                paymentMethod: {
-                    type: res.data.instrument_type == 'BANK_ACCOUNT' ? 'ACH' : 'CC',
-                    processorToken: {
-                        processor: 'Finix',
-                        token: res.data.id
-                    }
-                },
-                savePaymentMethod: options.savePaymentMethod
+            let paymentMethod = {
+                type: res.data.instrument_type == 'BANK_ACCOUNT' ? 'ACH' : 'CC',
+                processorToken: {
+                    processor: 'Finix',
+                    token: res.data.id
+                }
             };
-
-            options.onSaving(request);
-
-            let response = await fetch(options.endpoint, {
-                method: 'POST',
-                headers: {
-                    'content-type': 'application/json'
-                },
-                body: JSON.stringify(request)
-            })
-            if (!response.ok)
-                options.onError(null, response);
-
-            let responseData = await response.json();
-            if (responseData.ResponseCode === 0)
-                options.onSaved(responseData.PaymentMethod);
-            else
-                options.onError(null, responseData);
+            sendPaymentMethodRequest(self, paymentMethod);
         });
     }
 }
