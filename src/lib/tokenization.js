@@ -1,5 +1,6 @@
 import { options as gidxOptions } from './index.js'
 import { normalizeApiResponse } from './util.js';
+import finixFactory from './tokenization-finix.js';
 
 /**
  * @module gidx-js
@@ -87,6 +88,10 @@ const defaultOptions = {
     onError: () => { }
 };
 
+let tokenizerFactories = {
+    finix: finixFactory
+}
+
 /**
  * Show the payment method form.
  * @returns {PaymentMethodForm}
@@ -98,8 +103,6 @@ export function showPaymentMethodForm(elementId, options) {
         throw new Error('You must call GIDX.init first to provide the merchantId and environment.');
     if (!options.merchantSessionId)
         throw new Error('merchantSessionId is required. Provide the same merchantSessionId that you passed to CreateSession.');
-    if (!window.Finix)
-        throw new Error('You must include a script tag for https://js.finix.com/v/1/finix.js');
     
     options = { ...defaultOptions, ...options };
 
@@ -114,67 +117,15 @@ export function showPaymentMethodForm(elementId, options) {
     //That means it will be in C# style case (ApplicationID), but we also want to support typical javascript style (applicationId).
     options.tokenizer = normalizeApiResponse(options.Tokenizer || options.tokenizer);
 
-    let result = {
-        options
-    };
-    result.submit = submit.bind(result);
-
-    if (options.showSubmitButton) {
-        options.onSubmit = result.submit
-    };
-
-    let finixForm = window.Finix.TokenForm;
-
-    if (options.paymentMethodTypes.length == 1) {
-        if (options.paymentMethodTypes[0] == 'CC') {
-            finixForm = window.Finix.CardTokenForm;
-        }
-        else if (options.paymentMethodTypes[0] == 'ACH') {
-            finixForm = window.Finix.BankTokenForm;
-        }
+    let factory = tokenizerFactories[options.tokenizer.type.toLowerCase()];
+    if (!factory) {
+        let tokenizerTypes = Object.keys(tokenizerFactories).join(', ');
+        throw new Error(`Unable to find tokenizer for ${options.tokenizer.type}. Available tokenizers: ${tokenizerTypes}.`)
     }
 
-    result.finixForm = finixForm.call(window.Finix, elementId, options);
+    console.log('showPaymentMethodForm', elementId, options);
+    let tokenizer = factory(elementId, options);
+    tokenizer.options = options;
 
-    return result;
-}
-
-function submit() {
-    var options = this.options;
-    let finixEnvironment = gidxOptions.environment == "production" ? "live" : "sandbox";
-    this.finixForm.submit(finixEnvironment, options.tokenizer.applicationid, async function (err, res) {
-        if (!res.data?.id)
-            options.onError(res || err, null);
-
-        let request = {
-            merchantId: gidxOptions.merchantId,
-            merchantSessionId: options.merchantSessionId,
-            paymentMethod: {
-                type: res.data.instrument_type == 'BANK_ACCOUNT' ? 'ACH' : 'CC',
-                processorToken: {
-                    processor: 'Finix',
-                    token: res.data.id
-                }
-            },
-            savePaymentMethod: options.savePaymentMethod
-        };
-
-        options.onSaving(request);
-
-        let response = await fetch(options.endpoint, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(request)
-        })
-        if (!response.ok)
-            options.onError(null, response);
-
-        let responseData = await response.json();
-        if (responseData.ResponseCode === 0)
-            options.onSaved(responseData.PaymentMethod);
-        else
-            options.onError(null, responseData);
-    });
+    return tokenizer;
 }
