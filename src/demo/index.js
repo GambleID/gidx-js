@@ -48,7 +48,7 @@ document.getElementById("show-challenge").onclick = function () {
 GIDX.init({
     merchantId: "1234",
     processorSessionId: {
-        name: 'Finix',
+        type: 'Finix',
         merchantId: 'MU4cihj5vQnQ1x8zxmE5jG4G'
     }
 });
@@ -57,7 +57,7 @@ let form = GIDX.showPaymentMethodForm('payment-method-form', {
     //paymentMethodTypes: ['ACH', 'CC']
     merchantSessionId: '1234',
     tokenizer: {
-        name: 'Finix',
+        type: 'Finix',
         applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
     },
     showSubmitButton: true,
