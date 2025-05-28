@@ -20,6 +20,6 @@ export function init(o) {
     }
 }
 
-export * from './rapid.js';
+export * from './3ds.js';
 export { showPaymentMethodForm } from './tokenization.js';
 export { getProcessorSessionId };
