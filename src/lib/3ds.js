@@ -1,5 +1,6 @@
 import { normalizeApiResponse } from './util.js';
 import rapidFactory from './3ds-rapid.js';
+import evervaultFactory from './3ds-evervault.js';
 
 /**
  * @module gidx-js
@@ -35,7 +36,7 @@ import rapidFactory from './3ds-rapid.js';
  * @memberof module:gidx-js
  * @category 3ds objects
  * @property {onComplete} onComplete Function called after challenge has been completed by the user.
- * @property {onShown} onShown Function called after Element is inserted into the page. Only for Rapid.
+ * @property {onShown} onShown Function called after Element is inserted into the page. 
  * @property {insertElement} insertElement Insert the Element containing the challenge iframe into the page. Only for Rapid.
  * @property {removeElement} removeElement Remove the Element containing the challenge iframe from the page. Only for Rapid.
  */
@@ -88,7 +89,8 @@ export function get3DSDeviceData() {
 
 
 let factories = {
-    approvelyrapid: rapidFactory
+    approvelyrapid: rapidFactory,
+    evervault: evervaultFactory
 }
 
 /**

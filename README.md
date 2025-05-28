@@ -256,15 +256,15 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
 ## API Reference
 
 * [gidx-js](#module_gidx-js)
-    * _rapid callbacks_
+    * _3ds callbacks_
         * [.onComplete](#module_gidx-js.onComplete) : <code>function</code>
         * [.onShown](#module_gidx-js.onShown) : <code>function</code>
         * [.insertElement](#module_gidx-js.insertElement) ⇒ <code>Element</code>
         * [.removeElement](#module_gidx-js.removeElement) : <code>function</code>
-    * _rapid functions_
+    * _3ds functions_
         * [.get3DSDeviceData()](#module_gidx-js.get3DSDeviceData) ⇒ <code>DeviceData</code>
         * [.show3DSChallenge(action, options)](#module_gidx-js.show3DSChallenge)
-    * _rapid objects_
+    * _3ds objects_
         * [.Action](#module_gidx-js.Action) : <code>Object</code>
         * [.DeviceData](#module_gidx-js.DeviceData) : <code>Object</code>
         * [.3DSChallengeOptions](#module_gidx-js.3DSChallengeOptions) : <code>Object</code>
@@ -284,7 +284,7 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
 
 ### GIDX.onComplete : <code>function</code>
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid callbacks  
+**Category**: 3ds callbacks  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -294,7 +294,7 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
 
 ### GIDX.onShown : <code>function</code>
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid callbacks  
+**Category**: 3ds callbacks  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -305,7 +305,7 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
 ### GIDX.insertElement ⇒ <code>Element</code>
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
 **Returns**: <code>Element</code> - The Element that was inserted into the page.  
-**Category**: rapid callbacks  
+**Category**: 3ds callbacks  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -315,7 +315,7 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
 
 ### GIDX.removeElement : <code>function</code>
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid callbacks  
+**Category**: 3ds callbacks  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -327,14 +327,14 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
 Get the data required for the PaymentMethod.ThreeDS object passed to the CompleteSession API.
 
 **Kind**: static method of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid functions  
+**Category**: 3ds functions  
 <a name="module_gidx-js.show3DSChallenge"></a>
 
 ### GIDX.show3DSChallenge(action, options)
 Show the 3DS challenge to the user.
 
 **Kind**: static method of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid functions  
+**Category**: 3ds functions  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -347,14 +347,15 @@ Show the 3DS challenge to the user.
 Action object that is returned from the CompleteSession API when a 3DS challenge is required.
 
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid objects  
+**Category**: 3ds objects  
 **Properties**
 
-| Name | Type |
-| --- | --- |
-| url | <code>string</code> | 
-| creq | <code>string</code> | 
-| transactionId | <code>string</code> | 
+| Name | Type | Description |
+| --- | --- | --- |
+| provider | <code>string</code> | The 3DS provider (ex "ApprovelyRapid" or "Evervault") |
+| url | <code>string</code> |  |
+| creq | <code>string</code> |  |
+| transactionId | <code>string</code> | Either the 3DS transaction ID, or for Evervault, their session ID |
 
 <a name="module_gidx-js.DeviceData"></a>
 
@@ -362,7 +363,7 @@ Action object that is returned from the CompleteSession API when a 3DS challenge
 Device data that is used to process 3DS.
 
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid objects  
+**Category**: 3ds objects  
 **Properties**
 
 | Name | Type | Description |
@@ -379,15 +380,15 @@ Device data that is used to process 3DS.
 Options used by show3DSChallenge.
 
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
-**Category**: rapid objects  
+**Category**: 3ds objects  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
 | onComplete | <code>onComplete</code> | Function called after challenge has been completed by the user. |
 | onShown | <code>onShown</code> | Function called after Element is inserted into the page. |
-| insertElement | <code>insertElement</code> | Insert the Element containing the challenge iframe into the page. |
-| removeElement | <code>removeElement</code> | Remove the Element containing the challenge iframe from the page. |
+| insertElement | <code>insertElement</code> | Insert the Element containing the challenge iframe into the page. Only for Rapid. |
+| removeElement | <code>removeElement</code> | Remove the Element containing the challenge iframe from the page. Only for Rapid. |
 
 <a name="module_gidx-js.onLoad"></a>
 
