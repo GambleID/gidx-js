@@ -78,6 +78,7 @@ import evervaultFactory from './3ds-evervault.js';
  */
 export function get3DSDeviceData() {
     return {
+        enabled: true,
         colorDepth: window.screen.colorDepth,
         screenHeight: window.screen.height,
         screenWidth: window.screen.width,
