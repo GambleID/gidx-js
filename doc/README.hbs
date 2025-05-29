@@ -4,8 +4,8 @@
 Client-side Javascript utilities for GambleID.
 
 This library includes utilities for:
-* [Approvely Rapid 3DS](#rapid-3ds)
-* [Credit Card Tokenization (via Finix)](#tokenization)
+* [3DS](#3ds)
+* [Payment Method Tokenization](#tokenization)
 * [Processor Session ID](#processor-session-id)
 
 ## Install
@@ -40,8 +40,9 @@ GIDX.init({
     environment: "sandbox" //or production
 });
 ```
-## Rapid 3DS
-Approvely Rapid requires 3D Secure (3DS, ThreeDS) for all credit card, Apple Pay and Google Pay payments. This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges.
+## 3DS
+3D Secure (3DS, ThreeDS) can be used to protect a credit card deposit from chargebacks. Some processors, like Approvely Rapid, require you use their 3DS implementation, but we also offer standalone 3DS through Evervault.
+This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges returned in the CompleteSession API response.
 ### Populating the ThreeDS object
 Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
 ```js
@@ -55,30 +56,16 @@ let completeSessionRequest = {
 };
 ```
 
-If you are also using Approvely Rapid's [chargeback protection](https://docs.coinflow.cash/docs/implement-chargeback-protection) and have initiated the nSure SDK on the page, `get3DSDeviceData` will also include the `DeviceID`. Below is the javascript Approvely Rapid wants you to include on every page of your app, if you are using their chargeback protection.
-
-```html
-<script src="https://sdk.nsureapi.com/sdk.js"></script>
-<script>
-    window.nSureAsyncInit = function (deviceId) {
-        window.nSureSDK.init('9JBW2RHC7JNJN8ZQ');
-        window.nSureSDK.init({
-            appId: '9JBW2RHC7JNJN8ZQ',
-            partnerId: '<contact Approvely for this>'
-        });
-    };
-</script>
-```
-
 ### Handling the 3DSChallenge Action
 Handle the 3DSChallenge Action that can be returned from the CompleteSession API by calling the `show3DSChallenge` function.
 ```js
 let completeSessionResponse = {
     Action: {
         Type: "3DSChallenge",
+        Provider: "ApprovelyRapid", // or "Evervault"
+        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
         URL: "https://acs-public.tp.mastercard.com/api/v1/browser_challenges",
-        CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI...",
-        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d"
+        CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI..."
     }
 };
 
@@ -105,13 +92,11 @@ if (completeSessionResponse.Action?.Type == "3DSChallenge") {
 }
 ```
 
-A 3DS challenge is a URL that gets loaded in a modal iframe that let's the user verify themselves with their bank. For more info on 3DS, [see the Approvely Rapid docs](https://docs.coinflow.cash/docs/about-3ds).
+A 3DS challenge is a URL that gets loaded in a modal iframe that let's the user verify themselves with their bank. For more info on 3DS, [see the Approvely Rapid docs](https://docs.coinflow.cash/docs/about-3ds) or the [Evervault docs](https://docs.evervault.com/payments/3d-secure).
 
-Although in our API requests to Approvely Rapid we set the option that we prefer not to receive a 3DS challenge, in the end it's up to the user's bank, so you need to handle the possibility that a challenge will be requested.
+### Customizing the Approvely Rapid 3DS Challenge HTML
 
-### Customizing the 3DS Challenge HTML
-
-By default, the 3DS challenge is an HTML5 dialog element inserted into the body of your page. The HTML looks like this:
+By default, the Approvely Rapid 3DS challenge is an HTML5 dialog element inserted into the body of your page. The HTML looks like this:
 ```html
 <dialog class="challenge-container">
     <iframe></iframe>
@@ -123,7 +108,7 @@ The [default CSS](src/lib/index.css) is included in the library, but feel free t
 For more advanced customization, you can provide `insertElement` and `removeElement` functions in your `options` object.
 
 ## Tokenization
-In order to use Finix to process credit cards, you must use their [tokenization form](https://finix.com/docs/guides/payments/online-payments/payment-details/token-forms/). Our library provides a function, `showPaymentMethodForm`, that renders the Finix form and handles the submission to our PaymentMethod API.
+You must use this library to collect credit card information from your users to avoid PCI compliance issues. The processor Finix also requires this library to collect bank account information for ACH payouts.
 
 ### Usage
 See the commented code sample below.
@@ -135,14 +120,14 @@ GIDX.init({
 })
 
 //Get the Tokenizer configuration returned in the CreateSession response
-let ccSettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "CC");
+let ccSettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "CC"); //Or look for Type === "ACH" for bank accounts.
 
 //Call the function to render the form inside of your HTML element
 GIDX.showPaymentMethodForm(
     'id-of-html-element', //The id of the HTML element. Must already exist on the page.
     {
         merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
-        paymentMethodTypes: ['CC'], //Finix tokenization form accepts both credit card and bank accounts, but only credit cards are required to use it.
+        paymentMethodTypes: ['CC'],
         tokenizer: ccSettings.Tokenizer,
         onSaved: function (paymentMethod) {
             //The full PaymentMethod object returned from our API is passed to this function.
@@ -159,15 +144,14 @@ GIDX.showPaymentMethodForm(
 ```
 
 ### Manually submit
-By default, a submit button will be rendered. If you want to handle the submission yourself, you should pass the option `showSubmitButton: false` and call `submit`, as shown below.
+To submit the payment method to be saved, you should call `submit` on the object returned from `showPaymentMethodForm`, as shown below.
 ```js
 let form = GIDX.showPaymentMethodForm(
     'id-of-html-element', //The id of the HTML element. Must already exist on the page.
     {
         merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
-        paymentMethodTypes: ['CC'], //Finix tokenization form accepts both credit card and bank accounts, but only credit cards are required to use it.
+        paymentMethodTypes: ['CC'],
         tokenizer: ccSettings.Tokenizer,
-        showSubmitButton: false,
         onSaved: function (paymentMethod) {
             //The full PaymentMethod object returned from our API is passed to this function.
             //Use it to populate your CompleteSession request and finalize the transaction.
@@ -186,19 +170,16 @@ form.submit();
 ```
 
 ### Billing address
-The Finix tokenization form does have the ability to collect the customer's billing address by passing `showAddress: true` in the options.
-However, it is also possible to pass the billing address yourself by using the `onSaving` option. This option allows you to make any changes to the PaymentMethod API request before it is sent.
+You must set the billing address of the payment method before we can save it. You can do this by providing the `onSaving` callback. This callback allows you to make any changes to the PaymentMethod API request before it is sent.
 ```js
 GIDX.showPaymentMethodForm('id-of-html-element', {
     merchantSessionId: '1234',
     paymentMethodTypes: ['CC'],
     tokenizer: ccSettings.Tokenizer,
     onSaved: function (paymentMethod) { },
-
-    showAddress: false, //Tell Finix not to build their own address elements.
     onSaving: function (request) {
         //Here you could get the address information from other inputs on the page that you control.
-        request.billingAddress = {
+        request.paymentMethod.billingAddress = {
             addressLine1: '123 Main St.',
             city: 'Houston',
             stateCode: 'TX',
@@ -209,7 +190,7 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
 ```
 
 ### Customizing the tokenization form
-Along with the options documented here, you can also provide any of the options that the [Finix JS library accepts](https://finix.com/docs/guides/payments/online-payments/payment-details/token-forms/).
+Along with the options documented here, you can also provide any of the options that the [Evervault JS library accepts](https://docs.evervault.com/sdks/javascript#ui.card()).
 ```js
 GIDX.showPaymentMethodForm('id-of-html-element', {
     merchantSessionId: '1234',
@@ -217,15 +198,7 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
     tokenizer: ccSettings.Tokenizer,
     onSaved: function (paymentMethod) { },
 
-    styles: {
-        default: {
-            border: '1px solid #CCCDCF',
-            borderRadius: '8px'
-        },
-        error: {
-            border: '1px solid rgba(255,0,0, 0.3)'
-        }
-    }
+    theme: 'material'
 });
 ```
 
