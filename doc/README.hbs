@@ -4,8 +4,8 @@
 Client-side Javascript utilities for GambleID.
 
 This library includes utilities for:
-* [3DS](#3ds)
 * [Payment Method Tokenization](#tokenization)
+* [3DS](#3ds)
 * [Processor Session ID](#processor-session-id)
 
 ## Install
@@ -40,72 +40,6 @@ GIDX.init({
     environment: "sandbox" //or production
 });
 ```
-## 3DS
-3D Secure (3DS, ThreeDS) can be used to protect a credit card deposit from chargebacks. Some processors, like Approvely Rapid, require you use their 3DS implementation, but we also offer standalone 3DS through Evervault.
-This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges returned in the CompleteSession API response.
-### Populating the ThreeDS object
-Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
-```js
-let completeSessionRequest = {
-    PaymentMethod: {
-        Type: "CC",
-        Token: "{insert token here}",
-        CVV: "123",
-        ThreeDS: GIDX.get3DSDeviceData()
-    }
-};
-```
-
-### Handling the 3DSChallenge Action
-Handle the 3DSChallenge Action that can be returned from the CompleteSession API by calling the `show3DSChallenge` function.
-```js
-let completeSessionResponse = {
-    Action: {
-        Type: "3DSChallenge",
-        Provider: "ApprovelyRapid", // or "Evervault"
-        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
-        URL: "https://acs-public.tp.mastercard.com/api/v1/browser_challenges",
-        CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI..."
-    }
-};
-
-if (completeSessionResponse.Action?.Type == "3DSChallenge") {
-    GIDX.show3DSChallenge(completeSessionResponse.Action, {
-        onComplete: function (transactionId) {
-            //Send another CompleteSession request after challenge is completed.
-            let completeSessionRequest = {
-                PaymentMethod: {
-                    Type: "CC",
-                    Token: "{insert token here}",
-                    ThreeDS: {
-                        TransactionID: transactionId,
-
-                        //Optional. Only required if using Approvely Rapid's chargeback protection
-                        DeviceID: window.nSureSDK?.getDeviceId()
-                    }
-                }
-            };
-
-            //Call CompleteSession API here
-        }
-    });
-}
-```
-
-A 3DS challenge is a URL that gets loaded in a modal iframe that let's the user verify themselves with their bank. For more info on 3DS, [see the Approvely Rapid docs](https://docs.coinflow.cash/docs/about-3ds) or the [Evervault docs](https://docs.evervault.com/payments/3d-secure).
-
-### Customizing the Approvely Rapid 3DS Challenge HTML
-
-By default, the Approvely Rapid 3DS challenge is an HTML5 dialog element inserted into the body of your page. The HTML looks like this:
-```html
-<dialog class="challenge-container">
-    <iframe></iframe>
-</dialog>
-```
-
-The [default CSS](src/lib/index.css) is included in the library, but feel free to add your own CSS to your page.
-
-For more advanced customization, you can provide `insertElement` and `removeElement` functions in your `options` object.
 
 ## Tokenization
 You must use this library to collect credit card information from your users to avoid PCI compliance issues. The processor Finix also requires this library to collect bank account information for ACH payouts.
@@ -201,6 +135,73 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
     theme: 'material'
 });
 ```
+
+## 3DS
+3D Secure (3DS, ThreeDS) can be used to protect a credit card deposit from chargebacks. Some processors, like Approvely Rapid, require you use their 3DS implementation, but we also offer standalone 3DS through Evervault.
+This library provides functions to help you populate the PaymentMethod.ThreeDS object of your CompleteSession API requests, and handle 3DS challenges returned in the CompleteSession API response.
+### Populating the ThreeDS object
+Populate the `PaymentMethod.ThreeDS` object of your CompleteSession API requests using the `get3DSDeviceData` function.
+```js
+let completeSessionRequest = {
+    PaymentMethod: {
+        Type: "CC",
+        Token: "{insert token here}",
+        CVV: "123",
+        ThreeDS: GIDX.get3DSDeviceData()
+    }
+};
+```
+
+### Handling the 3DSChallenge Action
+Handle the 3DSChallenge Action that can be returned from the CompleteSession API by calling the `show3DSChallenge` function.
+```js
+let completeSessionResponse = {
+    Action: {
+        Type: "3DSChallenge",
+        Provider: "ApprovelyRapid", // or "Evervault"
+        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
+        URL: "https://acs-public.tp.mastercard.com/api/v1/browser_challenges",
+        CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI..."
+    }
+};
+
+if (completeSessionResponse.Action?.Type == "3DSChallenge") {
+    GIDX.show3DSChallenge(completeSessionResponse.Action, {
+        onComplete: function (transactionId) {
+            //Send another CompleteSession request after challenge is completed.
+            let completeSessionRequest = {
+                PaymentMethod: {
+                    Type: "CC",
+                    Token: "{insert token here}",
+                    ThreeDS: {
+                        TransactionID: transactionId,
+
+                        //Optional. Only required if using Approvely Rapid's chargeback protection
+                        DeviceID: window.nSureSDK?.getDeviceId()
+                    }
+                }
+            };
+
+            //Call CompleteSession API here
+        }
+    });
+}
+```
+
+A 3DS challenge is a URL that gets loaded in a modal iframe that let's the user verify themselves with their bank. For more info on 3DS, [see the Approvely Rapid docs](https://docs.coinflow.cash/docs/about-3ds) or the [Evervault docs](https://docs.evervault.com/payments/3d-secure).
+
+### Customizing the Approvely Rapid 3DS Challenge HTML
+
+By default, the Approvely Rapid 3DS challenge is an HTML5 dialog element inserted into the body of your page. The HTML looks like this:
+```html
+<dialog class="challenge-container">
+    <iframe></iframe>
+</dialog>
+```
+
+The [default CSS](src/lib/index.css) is included in the library, but feel free to add your own CSS to your page.
+
+For more advanced customization, you can provide `insertElement` and `removeElement` functions in your `options` object.
 
 ## Processor Session ID
 Some processors, like Finix, require you to use their own JS SDK's for monitoring risk and fraud. To do this, you must call `GIDX.init` on every page of your application. Then, you must pass the `ProcessorSessionID` in your CreateSession or CompleteSession API requests.
