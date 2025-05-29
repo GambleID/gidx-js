@@ -15,6 +15,10 @@ class Evervault {
 
     init(elementId, options) {
         let evervault = new window.Evervault(options.tokenizer.teamid, options.tokenizer.appid);
+
+        if (typeof options.theme === 'string' && typeof evervault.ui.themes[options.theme] === "function")
+            options.theme = evervault.ui.themes[options.theme]()
+
         let card = evervault.ui.card(options)
         card.mount('#' + elementId);
         this.card = card;
