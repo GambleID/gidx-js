@@ -64,11 +64,13 @@ let form = GIDX.showPaymentMethodForm('payment-method-form', {
     //paymentMethodTypes: ['ACH', 'CC']
     merchantSessionId: '1234',
     tokenizer: {
-        type: 'Finix',
-        applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
+        //type: 'Finix',
+        //applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
+        type: 'Evervault',
+        teamId: "team_138d39e80bcb",
+        appId: "app_eaa0d7860365"
     },
-    showSubmitButton: true,
-    hideErrorMessages: false
+    theme: 'material'
 });
 
 //document.getElementById("save-payment-method").onclick = function () {
