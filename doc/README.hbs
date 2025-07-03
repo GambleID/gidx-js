@@ -123,6 +123,27 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
 })
 ```
 
+### CVV only
+To allow the user to re-enter their CVV for an existing credit card, use the `cvvOnly` option. Only a single input for the CVV will be rendered. You can then call the `getCvv` function to collect the encrypted CVV and pass it to your backend for your CompleteSession API request.
+```js
+let form = GIDX.showPaymentMethodForm('id-of-html-element', {
+    merchantSessionId: '1234',
+    paymentMethodTypes: ['CC'],
+    tokenizer: ccSettings.Tokenizer,
+    cvvOnly: true
+});
+
+//Then populate the CVV of your CompleteSession API request with getCvv
+let completeSessionRequest = {
+    MerchantSessionID: '1234',
+    PaymentMethod: {
+        Type: 'CC',
+        Token: '707435d1-998c-4463-9367-c7ecf584e10d',
+        CVV: form.getCvv()
+    }
+};
+```
+
 ### Customizing the tokenization form
 Along with the options documented here, you can also provide any of the options that the [Evervault JS library accepts](https://docs.evervault.com/sdks/javascript#ui.card()).
 ```js

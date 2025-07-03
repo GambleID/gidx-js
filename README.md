@@ -123,6 +123,27 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
 })
 ```
 
+### CVV only
+To allow the user to re-enter their CVV for an existing credit card, use the `cvvOnly` option. Only a single input for the CVV will be rendered. You can then call the `getCvv` function to collect the encrypted CVV and pass it to your backend for your CompleteSession API request.
+```js
+let form = GIDX.showPaymentMethodForm('id-of-html-element', {
+    merchantSessionId: '1234',
+    paymentMethodTypes: ['CC'],
+    tokenizer: ccSettings.Tokenizer,
+    cvvOnly: true
+});
+
+//Then populate the CVV of your CompleteSession API request with getCvv
+let completeSessionRequest = {
+    MerchantSessionID: '1234',
+    PaymentMethod: {
+        Type: 'CC',
+        Token: '707435d1-998c-4463-9367-c7ecf584e10d',
+        CVV: form.getCvv()
+    }
+};
+```
+
 ### Customizing the tokenization form
 Along with the options documented here, you can also provide any of the options that the [Evervault JS library accepts](https://docs.evervault.com/sdks/javascript#ui.card()).
 ```js
@@ -424,6 +445,7 @@ Returned from the `showPaymentMethodForm` function. Gives you the ability to man
 | Name | Type | Description |
 | --- | --- | --- |
 | submit | <code>function</code> | A function used to manually submit the payment method form. Must be used if showSubmitButton = false. |
+| getCvv | <code>function</code> | If cvvOnly option is set to true, call this method to get the encrypted CVV to pass to your backend. |
 
 <a name="module_gidx-js.PaymentMethodFormOptions"></a>
 
@@ -442,6 +464,7 @@ Options used by showPaymentMethodForm. Along with these options, you may also pr
 | [paymentMethodTypes] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>[&quot;CC&quot;, &quot;ACH&quot;]</code> | The types of PaymentMethods that the form should accept. Only CC and ACH are supported. |
 | savePaymentMethod | <code>boolean</code> | <code>true</code> | Save the payment method for the customer to re-use. |
 | showSubmitButton | <code>boolean</code> | <code>true</code> | Set to false if you want to submit the form yourself using the .submit() method. |
+| cvvOnly | <code>boolean</code> | <code>false</code> | Set to true to display only the CVV input. Used to let user re-enter CVV on a saved credit card. Use getCvv method to get the encrypted CVV. |
 | onLoad | <code>onLoad</code> |  | A function called after the form has loaded. |
 | onUpdate | <code>onUpdate</code> |  | A function called after any input in the form is updated. |
 | onSaving | <code>onSaving</code> |  | A function called right before sending the PaymentMethod API request. The request can be modified here. |
