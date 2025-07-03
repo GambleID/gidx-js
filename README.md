@@ -464,7 +464,7 @@ Options used by showPaymentMethodForm. Along with these options, you may also pr
 | [paymentMethodTypes] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>[&quot;CC&quot;, &quot;ACH&quot;]</code> | The types of PaymentMethods that the form should accept. Only CC and ACH are supported. |
 | savePaymentMethod | <code>boolean</code> | <code>true</code> | Save the payment method for the customer to re-use. |
 | showSubmitButton | <code>boolean</code> | <code>true</code> | Set to false if you want to submit the form yourself using the .submit() method. |
-| cvvOnly | <code>boolean</code> | <code>false</code> | Set to true to display only the CVV input. Used to let user re-enter CVV on a saved credit card. Use getCvv method to get the encrypted CVV. |
+| cvvOnly | <code>boolean</code> | <code>false</code> | Set to true to display only the CVV input. Lets user re-enter CVV on a saved credit card. Use the getCvv function to get the encrypted CVV. |
 | onLoad | <code>onLoad</code> |  | A function called after the form has loaded. |
 | onUpdate | <code>onUpdate</code> |  | A function called after any input in the form is updated. |
 | onSaving | <code>onSaving</code> |  | A function called right before sending the PaymentMethod API request. The request can be modified here. |
