@@ -52,6 +52,11 @@ class Finix {
             sendPaymentMethodRequest(self, paymentMethod);
         });
     }
+
+    getCvv() {
+        //getCvv method was added for Evervault, but won't be supported by Finix.
+        return null;
+    }
 }
 
 export default function (elementId, options) {

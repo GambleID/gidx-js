@@ -19,12 +19,19 @@ class Evervault {
         if (typeof options.theme === 'string' && typeof evervault.ui.themes[options.theme] === "function")
             options.theme = evervault.ui.themes[options.theme]()
 
+        if (options.cvvOnly)
+            options.fields = ['cvc'];
+
         let card = evervault.ui.card(options)
         card.mount('#' + elementId);
         this.card = card;
     }
 
     submit() {
+        //Don't send PaymentMethod request if just collecting a CVV.
+        if (this.options.cvvOnly)
+            return;
+
         //Evervault provides isComplete and isValid booleans. If either are false, don't continue.
         if (!this.card.values.isComplete || !this.card.values.isValid)
             return;
@@ -40,6 +47,10 @@ class Evervault {
             }
         };
         sendPaymentMethodRequest(this, paymentMethod);
+    }
+
+    getCvv() {
+        return this.card.values.card.cvc;
     }
 }
 

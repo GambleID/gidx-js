@@ -14,6 +14,7 @@ import evervaultFactory from './tokenization-evervault.js';
  * @memberof module:gidx-js
  * @category tokenizer objects
  * @property {function} submit A function used to manually submit the payment method form. Must be used if showSubmitButton = false.
+ * @property {function} getCvv If cvvOnly option is set to true, call this method to get the encrypted CVV to pass to your backend.
  */
 
 /**
@@ -27,6 +28,7 @@ import evervaultFactory from './tokenization-evervault.js';
  * @property {(string[]|string)} [paymentMethodTypes=["CC", "ACH"]] The types of PaymentMethods that the form should accept. Only CC and ACH are supported.
  * @property {boolean} savePaymentMethod=true Save the payment method for the customer to re-use.
  * @property {boolean} showSubmitButton=true Set to false if you want to submit the form yourself using the .submit() method.
+ * @property {boolean} cvvOnly=false Set to true to display only the CVV input. Used to let user re-enter CVV on a saved credit card. Use getCvv method to get the encrypted CVV.
  * @property {onLoad} onLoad A function called after the form has loaded.
  * @property {onUpdate} onUpdate A function called after any input in the form is updated.
  * @property {onSaving} onSaving A function called right before sending the PaymentMethod API request. The request can be modified here.
@@ -82,6 +84,7 @@ const defaultOptions = {
     },
     merchantSessionId: null,
     showSubmitButton: true,
+    cvvOnly: false,
     onLoad: () => { },
     onUpdate: () => { },
     onSaving: (request) => { },
