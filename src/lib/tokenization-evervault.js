@@ -32,8 +32,7 @@ class Evervault {
         if (this.options.cvvOnly)
             return;
 
-        //Evervault provides isComplete and isValid booleans. If either are false, don't continue.
-        if (!this.card.values.isComplete || !this.card.values.isValid)
+        if (!this.card.values.isComplete)
             return;
 
         let paymentMethod = {
