@@ -182,12 +182,12 @@ let completeSessionResponse = {
 
         //Evervault 3DS challenges have these properties
         Provider: "Evervault",
-        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
+        TransactionID: "tds_visa_b0237020561f",
         EvervaultTeamID: "team_1234",
         EvervaultAppID: "app_1234",
 
         //ApprovelyRapid 3DS challenges have these properties
-        Provider: "ApprovelyRapid"
+        Provider: "ApprovelyRapid",
         TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
         URL: "https://acs-public.tp.mastercard.com/api/v1/browser_challenges",
         CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI..."
