@@ -179,7 +179,15 @@ Handle the 3DSChallenge Action that can be returned from the CompleteSession API
 let completeSessionResponse = {
     Action: {
         Type: "3DSChallenge",
-        Provider: "ApprovelyRapid", // or "Evervault"
+
+        //Evervault 3DS challenges have these properties
+        Provider: "Evervault",
+        TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
+        EvervaultTeamID: "team_1234",
+        EvervaultAppID: "app_1234",
+
+        //ApprovelyRapid 3DS challenges have these properties
+        Provider: "ApprovelyRapid"
         TransactionID: "707435d1-998c-4463-9367-c7ecf584e10d",
         URL: "https://acs-public.tp.mastercard.com/api/v1/browser_challenges",
         CReq: "eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI..."
