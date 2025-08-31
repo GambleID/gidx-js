@@ -1,6 +1,7 @@
 import { loadScript } from './util.js';
 import { sendPaymentMethodRequest } from './tokenization.js';
 
+let evervaultCache = {};
 
 class Evervault {
     constructor(elementId, options) {
@@ -14,7 +15,11 @@ class Evervault {
     }
 
     init(elementId, options) {
-        let evervault = new window.Evervault(options.tokenizer.teamid, options.tokenizer.appid);
+        let evervault = evervaultCache[options.tokenizer.appid];
+        if (!evervault) {
+            evervault = new window.Evervault(options.tokenizer.teamid, options.tokenizer.appid);
+            evervaultCache[options.tokenizer.appid] = evervault;
+        }
 
         if (typeof options.theme === 'string' && typeof evervault.ui.themes[options.theme] === "function")
             options.theme = evervault.ui.themes[options.theme]()
