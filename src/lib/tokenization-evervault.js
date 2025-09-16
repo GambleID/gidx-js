@@ -27,7 +27,16 @@ class Evervault {
         if (options.cvvOnly)
             options.fields = ['cvc'];
 
-        let card = evervault.ui.card(options)
+        let card = evervault.ui.card(options);
+
+        if (options.onLoad) {
+            card.on('ready', options.onLoad);
+        }
+
+        if (options.onUpdate) {
+            card.on('change', options.onUpdate);
+        }
+
         card.mount('#' + elementId);
         this.card = card;
     }
