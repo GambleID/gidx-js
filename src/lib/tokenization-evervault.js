@@ -27,6 +27,9 @@ class Evervault {
         if (options.cvvOnly)
             options.fields = ['cvc'];
 
+        if (options.tokenizer.acceptedbrands && !options.acceptedBrands)
+            options.acceptedBrands = options.tokenizer.acceptedbrands
+
         let card = evervault.ui.card(options);
 
         if (options.onLoad) {
