@@ -59,6 +59,6 @@ class Finix {
     }
 }
 
-export default function (elementId, options) {
+export default function (type, elementId, options) {
     return new Finix(elementId, options);
 }

@@ -55,22 +55,23 @@ document.getElementById("show-challenge").onclick = function () {
 GIDX.init({
     merchantId: "1234",
     processorSessionId: {
-        type: 'Finix',
-        merchantId: 'MU4cihj5vQnQ1x8zxmE5jG4G'
+        type: "Finix",
+        merchantId: "MU4cihj5vQnQ1x8zxmE5jG4G"
     }
 });
 
-let form = GIDX.showPaymentMethodForm('payment-method-form', {
-    //paymentMethodTypes: ['ACH', 'CC']
-    merchantSessionId: '1234',
+let form = GIDX.showPaymentMethodForm("payment-method-form", {
+    //paymentMethodTypes: ["ACH", "CC"]
+    merchantSessionId: "1234",
     tokenizer: {
-        //type: 'Finix',
-        //applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
-        type: 'Evervault',
+        //type: "Finix",
+        //applicationId: "APeETPt5ca7BSf3bTQYnFr5T"
+        type: "Evervault",
         teamId: "team_138d39e80bcb",
-        appId: "app_eaa0d7860365"
+        appId: "app_eaa0d7860365",
+        merchantId: "merchant_14d1b2bc033c"
     },
-    theme: 'material'
+    theme: "material"
 });
 
 //document.getElementById("save-payment-method").onclick = function () {

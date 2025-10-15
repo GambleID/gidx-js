@@ -3,7 +3,7 @@ import { sendPaymentMethodRequest } from './tokenization.js';
 
 let evervaultCache = {};
 
-class Evervault {
+class EvervaultBase {
     constructor(elementId, options) {
         let self = this;
         if (!window.Evervault) {
@@ -15,14 +15,21 @@ class Evervault {
     }
 
     init(elementId, options) {
-        let evervault = evervaultCache[options.tokenizer.appid];
-        if (!evervault) {
-            evervault = new window.Evervault(options.tokenizer.teamid, options.tokenizer.appid);
-            evervaultCache[options.tokenizer.appid] = evervault;
+        this.evervault = evervaultCache[options.tokenizer.appid];
+        if (!this.evervault) {
+            this.evervault = new window.Evervault(options.tokenizer.teamid, options.tokenizer.appid);
+            evervaultCache[options.tokenizer.appid] = this.evervault;
         }
+    }
+}
 
-        if (typeof options.theme === 'string' && typeof evervault.ui.themes[options.theme] === "function")
-            options.theme = evervault.ui.themes[options.theme]()
+class EvervaultForm extends EvervaultBase {
+
+    init(elementId, options) {
+        super.init(elementId, options);
+
+        if (typeof options.theme === 'string' && typeof this.evervault.ui.themes[options.theme] === "function")
+            options.theme = this.evervault.ui.themes[options.theme]()
 
         if (options.cvvOnly)
             options.fields = ['cvc'];
@@ -30,7 +37,7 @@ class Evervault {
         if (options.tokenizer.acceptedbrands && !options.acceptedBrands)
             options.acceptedBrands = options.tokenizer.acceptedbrands
 
-        let card = evervault.ui.card(options);
+        let card = this.evervault.ui.card(options);
 
         if (options.onLoad) {
             card.on('ready', options.onLoad);
@@ -70,6 +77,12 @@ class Evervault {
     }
 }
 
-export default function (elementId, options) {
-    return new Evervault(elementId, options);
+class EvervaultButton extends EvervaultBase {
+
+}
+
+export default function (type, elementId, options) {
+    if (type == 'applePay' || type == 'googlePay')
+        return new EvervaultButton(elementId, options);
+    return new EvervaultForm(elementId, options);
 }

@@ -1,7 +1,7 @@
 import { options as gidxOptions } from './index.js'
 import { normalizeApiResponse } from './util.js';
 import finixFactory from './tokenization-finix.js';
-import evervaultFactory from './tokenization-evervault.js';
+import evervaultFactories from './tokenization-evervault.js';
 
 /**
  * @module gidx-js
@@ -18,7 +18,7 @@ import evervaultFactory from './tokenization-evervault.js';
  */
 
 /**
- * Options used by showPaymentMethodForm. Along with these options, you may also provide any of the options {@link https://finix.com/docs/guides/payments/online-payments/payment-details/token-forms/|documented by Finix}.
+ * Options used by showPaymentMethodForm. Along with these options, you may also provide any of the options {@link https://docs.evervault.com/sdks/javascript#ui.card()|documented by Evervault}.
  * @typedef {Object} PaymentMethodFormOptions
  * @memberof module:gidx-js
  * @category tokenizer objects
@@ -94,7 +94,7 @@ const defaultOptions = {
 
 let tokenizerFactories = {
     finix: finixFactory,
-    evervault: evervaultFactory
+    evervault: evervaultFactories
 }
 
 /**
@@ -104,34 +104,15 @@ let tokenizerFactories = {
  * @category tokenizer functions
  */
 export function showPaymentMethodForm(elementId, options) {
-    if (!gidxOptions.merchantId)
-        throw new Error('You must call GIDX.init first to provide the merchantId and environment.');
-    if (!options.merchantSessionId)
-        throw new Error('merchantSessionId is required. Provide the same merchantSessionId that you passed to CreateSession.');
-    
-    options = { ...defaultOptions, ...options };
+    return createTokenizer('form', elementId, options);
+}
 
-    if (typeof (options.paymentMethodTypes) === 'string')
-        options.paymentMethodTypes = [options.paymentMethodTypes];
+export function showApplePayButton(elementId, options) {
+    return createTokenizer('applePay', elementId, options);
+}
 
-    if (!options.endpoint)
-        options.endpoint = endpoints[gidxOptions.environment];
-
-    //We want the properties in options.tokenizer to be case-insensitive, so normalizeApiResponse converts them all the lower case.
-    //We want merchants to be able to just forward the full Tokenizer object they get back in the CreateSession response as-is.
-    //That means it will be in C# style case (ApplicationID), but we also want to support typical javascript style (applicationId).
-    options.tokenizer = normalizeApiResponse(options.Tokenizer || options.tokenizer);
-
-    let factory = tokenizerFactories[options.tokenizer.type.toLowerCase()];
-    if (!factory) {
-        let tokenizerTypes = Object.keys(tokenizerFactories).join(', ');
-        throw new Error(`Unable to find tokenizer for ${options.tokenizer.type}. Available tokenizers: ${tokenizerTypes}.`)
-    }
-
-    let tokenizer = factory(elementId, options);
-    tokenizer.options = options;
-
-    return tokenizer;
+export function showGooglePayButton(elementId, options) {
+    return createTokenizer('googlePay', elementId, options);
 }
 
 export async function sendPaymentMethodRequest(tokenizer, paymentMethod) {
@@ -160,4 +141,35 @@ export async function sendPaymentMethodRequest(tokenizer, paymentMethod) {
         options.onSaved(responseData.PaymentMethod);
     else
         options.onError(null, responseData);
+}
+
+function createTokenizer(type, elementId, options) {
+    if (!gidxOptions.merchantId)
+        throw new Error('You must call GIDX.init first to provide the merchantId and environment.');
+    if (!options.merchantSessionId)
+        throw new Error('merchantSessionId is required. Provide the same merchantSessionId that you passed to CreateSession.');
+
+    options = { ...defaultOptions, ...options };
+
+    if (typeof (options.paymentMethodTypes) === 'string')
+        options.paymentMethodTypes = [options.paymentMethodTypes];
+
+    if (!options.endpoint)
+        options.endpoint = endpoints[gidxOptions.environment];
+
+    //We want the properties in options.tokenizer to be case-insensitive, so normalizeApiResponse converts them all the lower case.
+    //We want merchants to be able to just forward the full Tokenizer object they get back in the CreateSession response as-is.
+    //That means it will be in C# style case (ApplicationID), but we also want to support typical javascript style (applicationId).
+    options.tokenizer = normalizeApiResponse(options.Tokenizer || options.tokenizer);
+
+    let factory = tokenizerFactories[options.tokenizer.type.toLowerCase()];
+    if (!factory) {
+        let tokenizerTypes = Object.keys(tokenizerFactories).join(', ');
+        throw new Error(`Unable to find tokenizer for ${options.tokenizer.type}. Available tokenizers: ${tokenizerTypes}.`)
+    }
+
+    let tokenizer = factory(type, elementId, options);
+    tokenizer.options = options;
+
+    return tokenizer;
 }
