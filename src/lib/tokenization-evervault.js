@@ -101,6 +101,9 @@ class EvervaultButton extends EvervaultBase {
         if (!options.transaction)
             throw new Error('options.transaction is required for Apple Pay and Google Pay.');
 
+        //Can't save Apple/Google Pay for re-use
+        options.savePaymentMethod = false;
+
         options.transaction.merchantId = options.tokenizer.merchantid;
         options.transaction.currency ??= 'USD';
         options.transaction.country ??= 'US';
