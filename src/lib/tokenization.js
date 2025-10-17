@@ -18,21 +18,22 @@ import evervaultFactories from './tokenization-evervault.js';
  */
 
 /**
- * Options used by showPaymentMethodForm. Along with these options, you may also provide any of the options {@link https://docs.evervault.com/sdks/javascript#ui.card()|documented by Evervault}.
- * @typedef {Object} PaymentMethodFormOptions
+ * Options used by showPaymentMethodForm, showApplePayButton and showGooglePayButton. Along with these options, you may also provide any of the options {@link https://docs.evervault.com/sdks/javascript#ui.card()|documented by Evervault}.
+ * @typedef {Object} TokenizationOptions
  * @memberof module:gidx-js
  * @category tokenizer objects
  * @property {string} merchantSessionId Required. The same MerchantSessionID that you passed to CreateSession.
  * @property {Object} tokenizer Required. The Tokenizer object returned in CreateSessionResponse.PaymentMethodSettings[].Tokenizer
  * @property {onSaved} onSaved Required. A function called after the PaymentMethod was successfully saved.
  * @property {(string[]|string)} [paymentMethodTypes=["CC", "ACH"]] The types of PaymentMethods that the form should accept. Only CC and ACH are supported.
- * @property {boolean} savePaymentMethod=true Save the payment method for the customer to re-use.
+ * @property {boolean} savePaymentMethod=true Save the payment method for the customer to re-use. Not available for Apple Pay and Google Pay.
  * @property {boolean} showSubmitButton=true Set to false if you want to submit the form yourself using the .submit() method.
  * @property {boolean} cvvOnly=false Set to true to display only the CVV input. Lets user re-enter CVV on a saved credit card. Use the getCvv function to get the encrypted CVV.
- * @property {onLoad} onLoad A function called after the form has loaded.
- * @property {onUpdate} onUpdate A function called after any input in the form is updated.
+ * @property {onLoad} onLoad A function called after the form has loaded. Not available for Apple Pay and Google Pay.
+ * @property {onUpdate} onUpdate A function called after any input in the form is updated. Not available for Apple Pay and Google Pay.
  * @property {onSaving} onSaving A function called right before sending the PaymentMethod API request. The request can be modified here.
  * @property {onError} onError A function called when an error occurs. The error could be sent by the tokenizer, or by the PaymentMethod API.
+ * @property {onCancel} onCancel A function called when the user cancels out of the Apple Pay or Google Pay window.
  */
 
 /**
@@ -69,6 +70,12 @@ import evervaultFactories from './tokenization-evervault.js';
  * @param {Object} paymentMethodError An error response returned from the PaymentMethod API.
  */
 
+/**
+ * @callback onCancel 
+ * @memberof module:gidx-js
+ * @category tokenizer callbacks
+ */
+
 const endpoints = {
     sandbox: 'https://api.gidx-service.in/v3.0/api/DirectCashier/PaymentMethod',
     production: 'https://api.gidx-service.com/v3.0/api/DirectCashier/PaymentMethod'
@@ -89,7 +96,8 @@ const defaultOptions = {
     onUpdate: () => { },
     onSaving: (request) => { },
     onSaved: (response) => { },
-    onError: () => { }
+    onError: () => { },
+    onCancel: () => { }
 };
 
 let tokenizerFactories = {
@@ -107,10 +115,20 @@ export function showPaymentMethodForm(elementId, options) {
     return createTokenizer('form', elementId, options);
 }
 
+/**
+ * Render an Apple Pay button.
+ * @static
+ * @category tokenizer functions
+ */
 export function showApplePayButton(elementId, options) {
     return createTokenizer('applePay', elementId, options);
 }
 
+/**
+ * Render a Google Pay button.
+ * @static
+ * @category tokenizer functions
+ */
 export function showGooglePayButton(elementId, options) {
     return createTokenizer('googlePay', elementId, options);
 }
