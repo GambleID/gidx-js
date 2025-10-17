@@ -24,6 +24,7 @@ import evervaultFactories from './tokenization-evervault.js';
  * @category tokenizer objects
  * @property {string} merchantSessionId Required. The same MerchantSessionID that you passed to CreateSession.
  * @property {Object} tokenizer Required. The Tokenizer object returned in CreateSessionResponse.PaymentMethodSettings[].Tokenizer
+ * @property {Object} transaction Required for Apple Pay and Google Pay. See {@link https://docs.evervault.com/payments/apple-pay#payment-types|Evervault's docs}.
  * @property {onSaved} onSaved Required. A function called after the PaymentMethod was successfully saved.
  * @property {(string[]|string)} [paymentMethodTypes=["CC", "ACH"]] The types of PaymentMethods that the form should accept. Only CC and ACH are supported.
  * @property {boolean} savePaymentMethod=true Save the payment method for the customer to re-use. Not available for Apple Pay and Google Pay.

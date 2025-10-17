@@ -204,9 +204,6 @@ GIDX.showApplePayButton(
 ### Customizing the buttons
 Along with the options documented here, you can also provide any of the options that the Evervault JS library accepts. See their docs on [Apple Pay](https://docs.evervault.com/payments/apple-pay#customize-the-apple-pay-button) and [Google Pay](http://docs.evervault.com/payments/google-pay#customize-the-google-pay-button) customizations.
 ```js
-//Get the Tokenizer configuration returned in the CreateSession response
-let applePaySettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "ApplePay"); //Or look for Type === "GooglePay".
-
 //Call the function to render the form inside of your HTML element
 GIDX.showApplePayButton('id-of-html-element', {
     merchantSessionId: '1234',

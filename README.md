@@ -204,9 +204,6 @@ GIDX.showApplePayButton(
 ### Customizing the buttons
 Along with the options documented here, you can also provide any of the options that the Evervault JS library accepts. See their docs on [Apple Pay](https://docs.evervault.com/payments/apple-pay#customize-the-apple-pay-button) and [Google Pay](http://docs.evervault.com/payments/google-pay#customize-the-google-pay-button) customizations.
 ```js
-//Get the Tokenizer configuration returned in the CreateSession response
-let applePaySettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "ApplePay"); //Or look for Type === "GooglePay".
-
 //Call the function to render the form inside of your HTML element
 GIDX.showApplePayButton('id-of-html-element', {
     merchantSessionId: '1234',
@@ -555,6 +552,7 @@ Options used by showPaymentMethodForm, showApplePayButton and showGooglePayButto
 | --- | --- | --- | --- |
 | merchantSessionId | <code>string</code> |  | Required. The same MerchantSessionID that you passed to CreateSession. |
 | tokenizer | <code>Object</code> |  | Required. The Tokenizer object returned in CreateSessionResponse.PaymentMethodSettings[].Tokenizer |
+| transaction | <code>Object</code> |  | Required for Apple Pay and Google Pay. See [Evervault's docs](https://docs.evervault.com/payments/apple-pay#payment-types). |
 | onSaved | <code>onSaved</code> |  | Required. A function called after the PaymentMethod was successfully saved. |
 | [paymentMethodTypes] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>[&quot;CC&quot;, &quot;ACH&quot;]</code> | The types of PaymentMethods that the form should accept. Only CC and ACH are supported. |
 | savePaymentMethod | <code>boolean</code> | <code>true</code> | Save the payment method for the customer to re-use. Not available for Apple Pay and Google Pay. |
