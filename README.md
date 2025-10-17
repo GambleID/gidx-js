@@ -4,7 +4,8 @@
 Client-side Javascript utilities for GambleID.
 
 This library includes utilities for:
-* [Payment Method Tokenization](#tokenization)
+* [Credit Card Tokenization](#tokenization)
+* [Apple Pay and Google Pay](#apple-pay-and-google-pay)
 * [3DS](#3ds)
 * [Processor Session ID](#processor-session-id)
 
@@ -42,7 +43,7 @@ GIDX.init({
 ```
 
 ## Tokenization
-You must use this library to collect credit card information from your users to avoid PCI compliance issues. The processor Finix also requires this library to collect bank account information for ACH payouts.
+You must use this library to collect credit card information from your users to avoid PCI compliance issues.
 
 ### Usage
 See the commented code sample below.
@@ -154,6 +155,67 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
     onSaved: function (paymentMethod) { },
 
     theme: 'material'
+});
+```
+
+## Apple Pay and Google Pay
+We support Apple Pay and Google Pay using the same tokenization framework outlined above through the `showAppleBayButton` and `showGooglePayButton` methods.
+
+### Usage
+See the commented code sample below.
+```js
+//Get the Tokenizer configuration returned in the CreateSession response
+let applePaySettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "ApplePay"); //Or look for Type === "GooglePay".
+
+//Call the function to render the form inside of your HTML element
+GIDX.showApplePayButton(
+    'id-of-html-element', //The id of the HTML element to insert the button into. Must already exist on the page.
+    {
+        merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
+        tokenizer: applePaySettings.Tokenizer,
+
+        //Apple and Google require some information on the transaction
+        transaction: {
+            amount: 1000 //The amount in cents (ex $10 = 1000)
+        },
+        onSaving: function (request) {
+            //Here you could get the address information from other inputs on the page that you control.
+            request.paymentMethod.billingAddress = {
+                addressLine1: '123 Main St.',
+                city: 'Houston',
+                stateCode: 'TX',
+                postalCode: '77001'
+            };
+        },
+        onSaved: function (paymentMethod) {
+            //The full PaymentMethod object returned from our API is passed to this function.
+            //Use it to populate your CompleteSession request and finalize the transaction.
+            let completeSessionRequest = {
+                MerchantSessionID: '1234',
+                PaymentMethod: {
+                    Type: paymentMethod.Type,
+                    Token: paymentMethod.Token
+                }
+            };
+        }
+    });
+```
+
+### Customizing the buttons
+Along with the options documented here, you can also provide any of the options that the Evervault JS library accepts. See their docs on [Apple Pay](https://docs.evervault.com/payments/apple-pay#customize-the-apple-pay-button) and [Google Pay](http://docs.evervault.com/payments/google-pay#customize-the-google-pay-button) customizations.
+```js
+//Call the function to render the form inside of your HTML element
+GIDX.showApplePayButton('id-of-html-element', {
+    merchantSessionId: '1234',
+    tokenizer: applePaySettings.Tokenizer,
+    transaction: { amount: 1000 },
+    onSaved: function (paymentMethod) { },
+
+    style: 'black',
+    size: {
+        width: '200px',
+        height: '40px'
+    }
 });
 ```
 
@@ -277,11 +339,14 @@ Pass the `ProcessorSessionID` in either you CreateSession or CompleteSession API
         * [.onSaving](#module_gidx-js.onSaving) : <code>function</code>
         * [.onSaved](#module_gidx-js.onSaved) : <code>function</code>
         * [.onError](#module_gidx-js.onError) : <code>function</code>
+        * [.onCancel](#module_gidx-js.onCancel) : <code>function</code>
     * _tokenizer functions_
         * [.showPaymentMethodForm()](#module_gidx-js.showPaymentMethodForm) ⇒ <code>PaymentMethodForm</code>
+        * [.showApplePayButton()](#module_gidx-js.showApplePayButton)
+        * [.showGooglePayButton()](#module_gidx-js.showGooglePayButton)
     * _tokenizer objects_
         * [.PaymentMethodForm](#module_gidx-js.PaymentMethodForm) : <code>Object</code>
-        * [.PaymentMethodFormOptions](#module_gidx-js.PaymentMethodFormOptions) : <code>Object</code>
+        * [.TokenizationOptions](#module_gidx-js.TokenizationOptions) : <code>Object</code>
 
 <a name="module_gidx-js.onComplete"></a>
 
@@ -434,10 +499,29 @@ Options used by show3DSChallenge.
 | tokenizerError | <code>Object</code> | An error returned from the tokenizer. |
 | paymentMethodError | <code>Object</code> | An error response returned from the PaymentMethod API. |
 
+<a name="module_gidx-js.onCancel"></a>
+
+### GIDX.onCancel : <code>function</code>
+**Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
+**Category**: tokenizer callbacks  
 <a name="module_gidx-js.showPaymentMethodForm"></a>
 
 ### GIDX.showPaymentMethodForm() ⇒ <code>PaymentMethodForm</code>
 Show the payment method form.
+
+**Kind**: static method of [<code>gidx-js</code>](#module_gidx-js)  
+**Category**: tokenizer functions  
+<a name="module_gidx-js.showApplePayButton"></a>
+
+### GIDX.showApplePayButton()
+Render an Apple Pay button.
+
+**Kind**: static method of [<code>gidx-js</code>](#module_gidx-js)  
+**Category**: tokenizer functions  
+<a name="module_gidx-js.showGooglePayButton"></a>
+
+### GIDX.showGooglePayButton()
+Render a Google Pay button.
 
 **Kind**: static method of [<code>gidx-js</code>](#module_gidx-js)  
 **Category**: tokenizer functions  
@@ -455,10 +539,10 @@ Returned from the `showPaymentMethodForm` function. Gives you the ability to man
 | submit | <code>function</code> | A function used to manually submit the payment method form. Must be used if showSubmitButton = false. |
 | getCvv | <code>function</code> | If cvvOnly option is set to true, call this method to get the encrypted CVV to pass to your backend. |
 
-<a name="module_gidx-js.PaymentMethodFormOptions"></a>
+<a name="module_gidx-js.TokenizationOptions"></a>
 
-### GIDX.PaymentMethodFormOptions : <code>Object</code>
-Options used by showPaymentMethodForm. Along with these options, you may also provide any of the options [documented by Finix](https://finix.com/docs/guides/payments/online-payments/payment-details/token-forms/).
+### GIDX.TokenizationOptions : <code>Object</code>
+Options used by showPaymentMethodForm, showApplePayButton and showGooglePayButton. Along with these options, you may also provide any of the options [documented by Evervault](https://docs.evervault.com/sdks/javascript#ui.card()).
 
 **Kind**: static typedef of [<code>gidx-js</code>](#module_gidx-js)  
 **Category**: tokenizer objects  
@@ -468,15 +552,17 @@ Options used by showPaymentMethodForm. Along with these options, you may also pr
 | --- | --- | --- | --- |
 | merchantSessionId | <code>string</code> |  | Required. The same MerchantSessionID that you passed to CreateSession. |
 | tokenizer | <code>Object</code> |  | Required. The Tokenizer object returned in CreateSessionResponse.PaymentMethodSettings[].Tokenizer |
+| transaction | <code>Object</code> |  | Required for Apple Pay and Google Pay. See [Evervault's docs](https://docs.evervault.com/payments/apple-pay#payment-types). |
 | onSaved | <code>onSaved</code> |  | Required. A function called after the PaymentMethod was successfully saved. |
 | [paymentMethodTypes] | <code>Array.&lt;string&gt;</code> \| <code>string</code> | <code>[&quot;CC&quot;, &quot;ACH&quot;]</code> | The types of PaymentMethods that the form should accept. Only CC and ACH are supported. |
-| savePaymentMethod | <code>boolean</code> | <code>true</code> | Save the payment method for the customer to re-use. |
+| savePaymentMethod | <code>boolean</code> | <code>true</code> | Save the payment method for the customer to re-use. Not available for Apple Pay and Google Pay. |
 | showSubmitButton | <code>boolean</code> | <code>true</code> | Set to false if you want to submit the form yourself using the .submit() method. |
 | cvvOnly | <code>boolean</code> | <code>false</code> | Set to true to display only the CVV input. Lets user re-enter CVV on a saved credit card. Use the getCvv function to get the encrypted CVV. |
-| onLoad | <code>onLoad</code> |  | A function called after the form has loaded. |
-| onUpdate | <code>onUpdate</code> |  | A function called after any input in the form is updated. |
+| onLoad | <code>onLoad</code> |  | A function called after the form has loaded. Not available for Apple Pay and Google Pay. |
+| onUpdate | <code>onUpdate</code> |  | A function called after any input in the form is updated. Not available for Apple Pay and Google Pay. |
 | onSaving | <code>onSaving</code> |  | A function called right before sending the PaymentMethod API request. The request can be modified here. |
 | onError | <code>onError</code> |  | A function called when an error occurs. The error could be sent by the tokenizer, or by the PaymentMethod API. |
+| onCancel | <code>onCancel</code> |  | A function called when the user cancels out of the Apple Pay or Google Pay window. |
 
 * * *
 

@@ -4,7 +4,8 @@
 Client-side Javascript utilities for GambleID.
 
 This library includes utilities for:
-* [Payment Method Tokenization](#tokenization)
+* [Credit Card Tokenization](#tokenization)
+* [Apple Pay and Google Pay](#apple-pay-and-google-pay)
 * [3DS](#3ds)
 * [Processor Session ID](#processor-session-id)
 
@@ -42,7 +43,7 @@ GIDX.init({
 ```
 
 ## Tokenization
-You must use this library to collect credit card information from your users to avoid PCI compliance issues. The processor Finix also requires this library to collect bank account information for ACH payouts.
+You must use this library to collect credit card information from your users to avoid PCI compliance issues.
 
 ### Usage
 See the commented code sample below.
@@ -154,6 +155,67 @@ GIDX.showPaymentMethodForm('id-of-html-element', {
     onSaved: function (paymentMethod) { },
 
     theme: 'material'
+});
+```
+
+## Apple Pay and Google Pay
+We support Apple Pay and Google Pay using the same tokenization framework outlined above through the `showAppleBayButton` and `showGooglePayButton` methods.
+
+### Usage
+See the commented code sample below.
+```js
+//Get the Tokenizer configuration returned in the CreateSession response
+let applePaySettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "ApplePay"); //Or look for Type === "GooglePay".
+
+//Call the function to render the form inside of your HTML element
+GIDX.showApplePayButton(
+    'id-of-html-element', //The id of the HTML element to insert the button into. Must already exist on the page.
+    {
+        merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
+        tokenizer: applePaySettings.Tokenizer,
+
+        //Apple and Google require some information on the transaction
+        transaction: {
+            amount: 1000 //The amount in cents (ex $10 = 1000)
+        },
+        onSaving: function (request) {
+            //Here you could get the address information from other inputs on the page that you control.
+            request.paymentMethod.billingAddress = {
+                addressLine1: '123 Main St.',
+                city: 'Houston',
+                stateCode: 'TX',
+                postalCode: '77001'
+            };
+        },
+        onSaved: function (paymentMethod) {
+            //The full PaymentMethod object returned from our API is passed to this function.
+            //Use it to populate your CompleteSession request and finalize the transaction.
+            let completeSessionRequest = {
+                MerchantSessionID: '1234',
+                PaymentMethod: {
+                    Type: paymentMethod.Type,
+                    Token: paymentMethod.Token
+                }
+            };
+        }
+    });
+```
+
+### Customizing the buttons
+Along with the options documented here, you can also provide any of the options that the Evervault JS library accepts. See their docs on [Apple Pay](https://docs.evervault.com/payments/apple-pay#customize-the-apple-pay-button) and [Google Pay](http://docs.evervault.com/payments/google-pay#customize-the-google-pay-button) customizations.
+```js
+//Call the function to render the form inside of your HTML element
+GIDX.showApplePayButton('id-of-html-element', {
+    merchantSessionId: '1234',
+    tokenizer: applePaySettings.Tokenizer,
+    transaction: { amount: 1000 },
+    onSaved: function (paymentMethod) { },
+
+    style: 'black',
+    size: {
+        width: '200px',
+        height: '40px'
+    }
 });
 ```
 

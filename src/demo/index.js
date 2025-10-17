@@ -55,22 +55,25 @@ document.getElementById("show-challenge").onclick = function () {
 GIDX.init({
     merchantId: "1234",
     processorSessionId: {
-        type: 'Finix',
-        merchantId: 'MU4cihj5vQnQ1x8zxmE5jG4G'
+        type: "Finix",
+        merchantId: "MU4cihj5vQnQ1x8zxmE5jG4G"
     }
 });
 
-let form = GIDX.showPaymentMethodForm('payment-method-form', {
-    //paymentMethodTypes: ['ACH', 'CC']
-    merchantSessionId: '1234',
-    tokenizer: {
-        //type: 'Finix',
-        //applicationId: 'APeETPt5ca7BSf3bTQYnFr5T'
-        type: 'Evervault',
-        teamId: "team_138d39e80bcb",
-        appId: "app_eaa0d7860365"
-    },
-    theme: 'material'
+let tokenizer = {
+    //type: "Finix",
+    //applicationId: "APeETPt5ca7BSf3bTQYnFr5T"
+    type: "Evervault",
+    teamId: "team_138d39e80bcb",
+    appId: "app_eaa0d7860365",
+    merchantId: "merchant_14d1b2bc033c"
+};
+
+let form = GIDX.showPaymentMethodForm("payment-method-form", {
+    //paymentMethodTypes: ["ACH", "CC"]
+    merchantSessionId: "1234",
+    tokenizer,
+    theme: "material"
 });
 
 //document.getElementById("save-payment-method").onclick = function () {
@@ -80,3 +83,25 @@ let form = GIDX.showPaymentMethodForm('payment-method-form', {
 document.getElementById("get-processor-session-id").onclick = function () {
     alert(GIDX.getProcessorSessionId());
 }
+
+GIDX.showGooglePayButton('google-pay-button', {
+    merchantSessionId: "1234",
+    tokenizer,
+    transaction: {
+        amount: 1000
+    },
+    onCancel: function () {
+        console.log('Google Pay canceled')
+    }
+});
+
+GIDX.showApplePayButton('apple-pay-button', {
+    merchantSessionId: "1234",
+    tokenizer,
+    transaction: {
+        amount: 1000
+    },
+    onCancel: function () {
+        console.log('Apple Pay canceled')
+    }
+});
