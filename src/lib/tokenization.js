@@ -1,8 +1,7 @@
 import { options as gidxOptions } from './index.js'
 import { normalizeApiResponse } from './util.js';
-import aeroPayFactories from './tokenization-aeroPay.js';
-import evervaultFactories from './tokenization-evervault.js';
 import finixFactory from './tokenization-finix.js';
+import evervaultFactories from './tokenization-evervault.js';
 
 /**
  * @module gidx-js
@@ -104,8 +103,7 @@ const defaultOptions = {
 
 let tokenizerFactories = {
     finix: finixFactory,
-    evervault: evervaultFactories,
-    aeroPay: aeroPayFactories
+    evervault: evervaultFactories
 }
 
 /**
