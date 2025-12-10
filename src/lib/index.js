@@ -21,5 +21,5 @@ export function init(o) {
 }
 
 export * from './3ds.js';
-export { showPaymentMethodForm, showApplePayButton, showGooglePayButton } from './tokenization.js';
+export { showPaymentMethodForm, showApplePayButton, showGooglePayButton, showAeroPayButton } from './tokenization.js';
 export { getProcessorSessionId };

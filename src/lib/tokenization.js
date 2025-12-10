@@ -103,7 +103,7 @@ const defaultOptions = {
 };
 
 let tokenizerFactories = {
-    aeroPay: aeroPayFactory,
+    aeropay: aeroPayFactory,
     evervault: evervaultFactories,
     finix: finixFactory
 };
@@ -134,6 +134,15 @@ export function showApplePayButton(elementId, options) {
  */
 export function showGooglePayButton(elementId, options) {
     return createTokenizer('googlePay', elementId, options);
+}
+
+/**
+ * Render an AeroPay button.
+ * @static
+ * @category tokenizer functions
+ */
+export function showAeroPayButton(elementId, options) {
+    return createTokenizer('aeroPay', elementId, options);
 }
 
 export async function sendPaymentMethodRequest(tokenizer, paymentMethod) {

@@ -2,6 +2,12 @@ import { loadScript } from './util.js';
 import { options as gidxOptions } from './index.js';
 import { sendPaymentMethodRequest } from './tokenization.js';
 
+const buttonHTML = `
+    <div style="position: relative; width: min-content; height: min-content;">
+        <button type="button" style="position: relative; box-sizing: border-box; width: auto; height: auto; border-radius: 10px; background: linear-gradient(225deg, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 100%); border: 1px solid rgb(255, 255, 255); display: grid; grid-template: &quot;. logo .&quot; / 25px 145px 25px; gap: 0px; place-items: center; cursor: pointer;">
+        <img width="145" height="30" src="https://vendor.aeropay.com/AERO/legacy/AP-Logo-Landscape-White.svg" alt="AeroPay logo" style="grid-area: logo; width: 145px; height: 30px; user-select: none; margin: 12px 0px;">
+        </button>
+    </div>`;
 
 class AeroPay {
     constructor(elementId, options) {
@@ -15,7 +21,7 @@ class AeroPay {
     }
 
     init(elementId, options) {
-        
+        document.getElementById(elementId).innerHTML = buttonHTML;
     }
 }
 
