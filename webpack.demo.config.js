@@ -32,6 +32,10 @@ export default {
                     "style-loader",
                     { loader: "css-loader", options: { sourceMap: true } },
                 ]
+            },
+            {
+                test: /lib.*\.html/,
+                type: "asset/source"
             }
         ]
     },

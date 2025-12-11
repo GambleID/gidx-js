@@ -105,3 +105,10 @@ GIDX.showApplePayButton('apple-pay-button', {
         console.log('Apple Pay canceled')
     }
 });
+
+GIDX.showAeroPayButton('aero-pay-button', {
+    merchantSessionId: "1234",
+    tokenizer: {
+        type: "AeroPay"
+    }
+})

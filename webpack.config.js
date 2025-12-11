@@ -20,6 +20,10 @@ const commonConfig = {
                     "style-loader",
                     { loader: "css-loader", options: { sourceMap: true } },
                 ]
+            },
+            {
+                test: /\.html/,
+                type: "asset/source"
             }
         ]
     }
