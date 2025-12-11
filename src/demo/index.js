@@ -108,6 +108,8 @@ GIDX.showApplePayButton('apple-pay-button', {
 
 GIDX.showAeroPayButton('aero-pay-button', {
     merchantSessionId: "1234",
+    userEmailAddress: 'email@email.com',
+    userPhoneNumber: '7135551234',
     tokenizer: {
         type: "AeroPay"
     }

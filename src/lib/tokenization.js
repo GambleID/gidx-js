@@ -145,8 +145,8 @@ export function showAeroPayButton(elementId, options) {
     return createTokenizer('aeroPay', elementId, options);
 }
 
-export async function sendPaymentMethodRequest(tokenizer, paymentMethod) {
-    let options = tokenizer.options;
+export async function sendPaymentMethodRequest(tokenizer, paymentMethod, overrideOptions) {
+    let options = { ...tokenizer.options, ...overrideOptions };
     let request = {
         merchantId: gidxOptions.merchantId,
         merchantSessionId: options.merchantSessionId,
