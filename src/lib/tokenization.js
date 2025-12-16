@@ -168,7 +168,7 @@ export async function sendPaymentMethodRequest(tokenizer, paymentMethod, overrid
 
     let responseData = await response.json();
     if (responseData.ResponseCode === 0)
-        options.onSaved(responseData.PaymentMethod);
+        options.onSaved(responseData.PaymentMethod, responseData);
     else
         options.onError(null, responseData);
 }

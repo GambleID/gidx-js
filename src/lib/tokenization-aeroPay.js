@@ -113,9 +113,9 @@ class AeroPay {
 
         let overrideOptions = {
             onSaving: () => { },
-            onSaved: (pm) => {
-                if (pm.Action?.Type == "AeroPay") {
-                    self.setState(pm.Action);
+            onSaved: (pm, response) => {
+                if (response.Action?.Type == "AeroPay") {
+                    self.setState(response.Action);
                 }
             }
         };
@@ -140,9 +140,9 @@ class AeroPay {
 
         let overrideOptions = {
             onSaving: () => { },
-            onSaved: (pm) => {
-                if (pm.Action?.Type == "AeroPay") {
-                    self.setState(pm.Action);
+            onSaved: (pm, response) => {
+                if (response.Action?.Type == "AeroPay") {
+                    self.setState(response.Action);
                 }
             }
         };
