@@ -33,8 +33,8 @@ class Rapid {
             creq = action.creq,
             transactionId = action.transactionid;
 
-        if (!url || !creq || !transactionId)
-            throw new Error("url, creq, and transactionId are required to show a 3DS challenge.");
+        if (!url || !transactionId)
+            throw new Error("url and transactionId are required to show a 3DS challenge.");
 
         this.options = Object.assign({}, defaultOptions, options);
 
