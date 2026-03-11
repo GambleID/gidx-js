@@ -47,14 +47,16 @@ function createContainer(url, creq) {
     let container = document.createElement("dialog");
     container.className = "challenge-container";
 
-    //Iframe srcDoc copied from: https://docs.coinflow.cash/recipes/complete-checkout-with-3ds-challenge
-    let srcDoc = `<html><body onload="document.challenge.submit()">
-                        <form method="post" name="challenge" action="${encodeURI(url)}">
-                            <input type="hidden" name="creq" value="${creq}" />
-                        </form>
-                    </body></html>`;
     let iframe = document.createElement("iframe");
+
+    //Iframe srcDoc copied from: https://docs.coinflow.cash/recipes/recipes/add-3-ds-challenge-angular
+    let srcDoc = `<html><body onload="document.challenge.submit()">
+                    <form method="post" name="challenge" action="${url}">
+                        <input type="hidden" name="creq" value="${creq}" />
+                    </form>
+                </body></html>`;
     iframe.srcdoc = srcDoc;
+
     container.appendChild(iframe);
 
     return container;
