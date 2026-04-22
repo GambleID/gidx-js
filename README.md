@@ -194,7 +194,10 @@ GIDX.showApplePayButton(
                 MerchantSessionID: '1234',
                 PaymentMethod: {
                     Type: paymentMethod.Type,
-                    Token: paymentMethod.Token
+                    Token: paymentMethod.Token,
+
+                    //If using Approvley Rapid, also pass 3DS device data
+                    ThreeDS: GIDX.get3DSDeviceData()
                 }
             };
         }
