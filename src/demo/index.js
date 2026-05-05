@@ -60,19 +60,25 @@ GIDX.init({
     }
 });
 
-let tokenizer = {
-    //type: "Finix",
-    //applicationId: "APeETPt5ca7BSf3bTQYnFr5T"
+let evervaultTokenizer = {
     type: "Evervault",
     teamId: "team_138d39e80bcb",
     appId: "app_eaa0d7860365",
     merchantId: "merchant_14d1b2bc033c"
 };
 
+let finixTokenizer = {
+    type: "Finix",
+    version: "2",
+    applicationId: "APeETPt5ca7BSf3bTQYnFr5T"
+}
+
 let form = GIDX.showPaymentMethodForm("payment-method-form", {
-    //paymentMethodTypes: ["ACH", "CC"]
+    //paymentMethodTypes: ["ACH", "CC"],
+    paymentMethodTypes: ["CC"],
     merchantSessionId: "1234",
-    tokenizer,
+    tokenizer: finixTokenizer,
+    //tokenizer: evervaultTokenizer,
     theme: "material"
 });
 
@@ -86,7 +92,7 @@ document.getElementById("get-processor-session-id").onclick = function () {
 
 GIDX.showGooglePayButton('google-pay-button', {
     merchantSessionId: "1234",
-    tokenizer,
+    tokenizer: evervaultTokenizer,
     transaction: {
         amount: 1000
     },
@@ -97,7 +103,7 @@ GIDX.showGooglePayButton('google-pay-button', {
 
 GIDX.showApplePayButton('apple-pay-button', {
     merchantSessionId: "1234",
-    tokenizer,
+    tokenizer: evervaultTokenizer,
     transaction: {
         amount: 1000
     },
