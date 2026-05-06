@@ -69,7 +69,6 @@ let evervaultTokenizer = {
 
 let finixTokenizer = {
     type: "Finix",
-    version: "2",
     applicationId: "APeETPt5ca7BSf3bTQYnFr5T"
 }
 

@@ -6,7 +6,7 @@ import { sendPaymentMethodRequest } from './tokenization.js';
 class Finix {
     constructor(elementId, options) {
         var self = this;
-        if (!window.Finix?.TokenForm) {
+        if (!window.Finix) {
             loadScript('https://js.finix.com/v/1/finix.js').then(() => self.init(elementId, options));
         }
         else {
@@ -116,7 +116,8 @@ class FinixV2 {
 }
 
 export default function (type, elementId, options) {
-    if (options.tokenizer.version == '2')
-        return new FinixV2(elementId, options);
-    return new Finix(elementId, options);
+    //If merchant has manually included Finix v1 on page, use it. Otherwise, default to v2.
+    if (window.Finix?.TokenForm)
+        return new Finix(elementId, options);
+    return new FinixV2(elementId, options);
 }
