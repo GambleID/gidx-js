@@ -99,6 +99,8 @@ class FinixV2 {
         if (!res.data?.id)
             options.onError(res || err, null);
 
+        //For Plaid, instrument_type is documented as "BANK_ACCOUNT", but it's actually returning "THIRD_PARTY_TOKEN".
+        //So, just checking for PAYMENT_CARD or not, in case that ever gets fixed.
         let paymentMethod = {
             type: res.data.instrument_type == 'PAYMENT_CARD' ? 'CC' : 'ACH',
             processorToken: {
