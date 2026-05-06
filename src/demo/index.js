@@ -73,12 +73,13 @@ let finixTokenizer = {
 }
 
 let form = GIDX.showPaymentMethodForm("payment-method-form", {
-    //paymentMethodTypes: ["ACH", "CC"],
-    paymentMethodTypes: ["CC"],
+    paymentMethodTypes: ["ACH"],
+    //paymentMethodTypes: ["CC"],
     merchantSessionId: "1234",
     tokenizer: finixTokenizer,
     //tokenizer: evervaultTokenizer,
-    theme: "material"
+    theme: "material",
+    showSubmitButton: true
 });
 
 //document.getElementById("save-payment-method").onclick = function () {
