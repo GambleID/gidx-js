@@ -100,7 +100,7 @@ class FinixV2 {
             options.onError(res || err, null);
 
         let paymentMethod = {
-            type: res.data.instrument_type == 'BANK_ACCOUNT' ? 'ACH' : 'CC',
+            type: res.data.instrument_type == 'PAYMENT_CARD' ? 'CC' : 'ACH',
             processorToken: {
                 processor: 'Finix',
                 token: res.data.id
