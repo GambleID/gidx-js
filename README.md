@@ -7,6 +7,7 @@ This library includes utilities for:
 * [Credit Card Tokenization](#tokenization)
 * [Apple Pay and Google Pay](#apple-pay-and-google-pay)
 * [3DS](#3ds)
+* [Plaid through Finix](#plaid-through-finix)
 * [Processor Session ID](#processor-session-id)
 
 ## Install
@@ -194,10 +195,7 @@ GIDX.showApplePayButton(
                 MerchantSessionID: '1234',
                 PaymentMethod: {
                     Type: paymentMethod.Type,
-                    Token: paymentMethod.Token,
-
-                    //If using Approvley Rapid, also pass 3DS device data
-                    ThreeDS: GIDX.get3DSDeviceData()
+                    Token: paymentMethod.Token
                 }
             };
         }
@@ -296,6 +294,38 @@ By default, the Approvely Rapid 3DS challenge is an HTML5 dialog element inserte
 The [default CSS](src/lib/index.css) is included in the library, but feel free to add your own CSS to your page.
 
 For more advanced customization, you can provide `insertElement` and `removeElement` functions in your `options` object.
+
+## Plaid through Finix
+Finix provides Plaid support to allow the user to login to their bank account instead of collecting the routing and account numbers yourself. We support this through our `showPaymentMethodForm` method, by passing `ACH` in the `paymentMethodTypes` option.
+```js
+//Get the ACH Tokenizer configuration returned in the CreateSession response
+let achSettings = createSessionResponse.PaymentMethodSettings.find((s) => s.Type === "ACH");
+
+//Call the function to render the form inside of your HTML element
+GIDX.showPaymentMethodForm(
+    'id-of-html-element', //The id of the HTML element. Must already exist on the page.
+    {
+        merchantSessionId: '1234', //Must be the same MerchantSessionID provided to the CreateSession API.
+        paymentMethodTypes: ['ACH'],
+        tokenizer: achSettings.Tokenizer,
+        showSubmitButton: true, //or false if you want to manually submit yourself.
+        onSaved: function (paymentMethod) {
+            //The full PaymentMethod object returned from our API is passed to this function.
+            //Use it to populate your CompleteSession request and finalize the transaction.
+            let completeSessionRequest = {
+                MerchantSessionID: '1234',
+                PaymentMethod: {
+                    Type: paymentMethod.Type,
+                    Token: paymentMethod.Token
+                }
+            };
+        }
+    });
+```
+```
+
+### Testing Plaid on sandbox
+Use any of the banks with "Platypus" in their name along with username `user_good` and password `pass_good`. For additional testing scenarios, see [Plaid's documentation](https://plaid.com/docs/sandbox/test-credentials/).
 
 ## Processor Session ID
 Some processors, like Finix, require you to use their own JS SDK's for monitoring risk and fraud. To do this, you must call `GIDX.init` on every page of your application. Then, you must pass the `ProcessorSessionID` in your CreateSession or CompleteSession API requests.

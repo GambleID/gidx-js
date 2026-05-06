@@ -5,11 +5,13 @@ let defaultSandboxOptions = {
     merchantId: 'MU4cihj5vQnQ1x8zxmE5jG4G' //GambleID's Finix Sandbox Merchant ID
 }
 
+//Finix API Docs: https://docs.finix.com/js/auth?__step=init
+
 class Finix {
     constructor(options) {
         var self = this;
         if (!window.Finix) {
-            loadScript('https://js.finix.com/v/1/finix.js').then(() => self.init(options));
+            loadScript('https://js.finix.com/v/2/finix.js').then(() => self.init(options));
         }
         else {
             self.init(options);
