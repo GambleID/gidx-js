@@ -7,6 +7,7 @@ This library includes utilities for:
 * [Credit Card Tokenization](#tokenization)
 * [Apple Pay and Google Pay](#apple-pay-and-google-pay)
 * [3DS](#3ds)
+* [Plaid through Finix](#plaid-through-finix)
 * [Processor Session ID](#processor-session-id)
 
 ## Install
