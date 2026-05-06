@@ -322,7 +322,6 @@ GIDX.showPaymentMethodForm(
         }
     });
 ```
-```
 
 ### Testing Plaid on sandbox
 Use any of the banks with "Platypus" in their name along with username `user_good` and password `pass_good`. For additional testing scenarios, see [Plaid's documentation](https://plaid.com/docs/sandbox/test-credentials/).
